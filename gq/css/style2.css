@@ -1,0 +1,51 @@
+.main {
+  background: rgba(0, 0, 0, 0.337);
+  color: aliceblue;
+  text-align: center;
+  position: absolute;
+  height: 100vh;
+  width: 12%;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+}
+.cont-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* background-color: red; */
+}
+.indTeam {
+  margin: 1px 5px 5px 5px;
+  /* width: 40%; */
+  /* margin-left: 2em; */
+  background-color: rgb(40, 184, 176);
+  border-radius: 5px;
+  padding: 5px;
+}
+.indTeam input {
+  width: 40%;
+  border:none;
+  outline: none;
+  margin-bottom: 5px;
+}
+.teamName{
+  color:#000;
+  font-weight: bold;
+  border: none;
+  outline: none;
+  background: white;
+}
+@media (max-width:375px) {
+    .cont-team {
+        flex-direction: column;
+      }
+      
+}
+@media (min-width:374px) {
+      body{
+        background: #000;
+      }
+/* .indTeam{ width: 10%;} */
+}
