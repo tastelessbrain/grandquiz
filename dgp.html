@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Nerd Quiz</title>
+    <link href="https://fonts.googleapis.com/css?family=Carrois+Gothic" rel="stylesheet">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">-->
+    <link rel="stylesheet" href="js/min.css">
+
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style2.css">
+
+
+</head>
+
+<body>
+    
+
+    <div class="question-board active" id="act">
+        <div class="board">
+            
+            <div class="row orange">
+                
+                <textarea cols="40" rows="2">Politik/Gesellschaft</textarea>
+                <button id="btn1">200</button>
+                <button id="btn2">400</button>
+                <button id="btn3">600</button>
+                <button id="btn4">800</button>
+                <button id="btn5">1000</button>
+            </div>
+            <div class="row blue">
+                <textarea cols="40" rows="2">Musik/Unterhaltung</textarea>
+                <button id="btn6">200</button>
+                <button id="btn7">400</button>
+                <button id="btn8">600</button>
+                <button id="btn9">800</button>
+                <button id="btn10">1000</button>
+            </div>
+            
+            <div class="row pink">
+                <textarea cols="40" rows="2">Rund um die Welt</textarea>
+                <button id="btn11">200</button>
+                <button id="btn12">400</button>
+                <button id="btn13">600</button>
+                <button id="btn14">800</button>
+                <button id="btn15">1000</button>
+            </div>
+            <div class="row darkblue">
+                <textarea cols="40" rows="2">Gott, Bibel, Jesus...</textarea>
+                <button id="btn16">200</button>
+                <button id="btn17">400</button>
+                <button id="btn18">600</button>
+                <button id="btn19">800</button>
+                <button id="btn20">1000</button>
+            </div>
+            <div class="row green">
+                <textarea cols="40" rows="2">Vermischtes</textarea>
+                <button id="btn21">200</button>
+                <button id="btn22">400</button>
+                <button id="btn23">600</button>
+                <button id="btn24">800</button>
+                <button id="btn25">1000</button>
+              
+            </div>
+            
+            <div class="quest">
+                <h1 class="questionEl"></h1>
+                
+                <hr>
+            </div>
+            <input type="button" class="round-info" value="Punkte verdoppeln" onclick="nextround()"></input>
+        </div>
+        
+    </div>
+
+    <div class="points">
+        <div class="row">
+            <textarea class="player" cols="40" rows="1">Gruppe 1</textarea>
+            <textarea class="score" cols="40" rows="1">0</textarea>
+        </div>
+        <div class="row">
+            <textarea class="player" cols="40" rows="1">Gruppe 2</textarea>
+            <textarea class="score" cols="40" rows="1">0</textarea>
+        </div>
+        <div class="row">
+            <textarea class="player" cols="40" rows="1">Gruppe 3</textarea>
+            <textarea class="score" cols="40" rows="1">0</textarea>
+        </div>
+        <div class="row">
+            <textarea class="player45" cols="40" rows="1">Gruppe 4</textarea>
+            <textarea class="score45" cols="40" rows="1">0</textarea>
+        </div>
+        <div class="row">
+            <textarea class="player45" cols="40" rows="1">Gruppe 5</textarea>
+            <textarea class="score45" cols="40" rows="1">0</textarea>
+        </div>
+        <div class="row">
+            <textarea class="player45" cols="40" rows="1">Gruppe 6</textarea>
+            <textarea class="score45" cols="40" rows="1">0</textarea>
+        </div>
+    </div>
+    <div class="main">
+        <div class="cont-team">
+            <div class="indTeam">
+                <p class ="teamName" contenteditable="">Team 1</p>
+                <input class="team1Input" type="number" oninput="inputFunctio()" id="input"><br>
+                <button class="addscore" onclick="add('input')">+</button>
+                <button class="removescore" onclick="remove('input')">-</button>
+            </div>
+        </div>
+        <br>
+        <button class="addTeamBtn">add Team</button>
+        <button class="reset">Reset</button>
+    </div>
+    <script src="app.js"></script>
+    <input type="button" class="screenBtn" value="Spieler" onclick="changeScreen()"></input>
+    <!--<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>-->
+    <script src='js/min.js'></script>
+    <script src='js/main.js'></script>
+    <script src='js/app.js'></script>
+
+
+
+    <script>
+        $(".question-board button").click(function() {
+            $(this).toggleClass("used");
+        });
+
+        $('body').keyup(function(e) {
+            if (e.keyCode == 39 || e.keyCode == 37) {
+                changeScreen();
+            }
+        });
+
+        function changeScreen() {
+            $(".question-board").toggleClass("active");
+            $(".points").toggleClass("active");
+
+            if ($(".screenBtn").attr('value') === "Spieler") {
+                $(".screenBtn").attr('value', 'Fragen');
+            } else {
+                $(".screenBtn").attr('value', 'Spieler');
+            }
+        }
+
+        function nextround() {
+            if ($(".question-board button").html() === "200") {
+                $(".question-board button").each(function() {
+                    let button = $(this);
+                    button.html(button.html() * 2);
+                });
+                $(".round-info").attr('value', 'Punkte halbieren');
+            } else {
+                $(".question-board button").each(function() {
+                    let button = $(this);
+                    button.html(button.html() / 2);
+                    $(".round-info").attr('value', 'Punkte verdoppeln');
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
