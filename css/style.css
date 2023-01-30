@@ -3,6 +3,16 @@ html, body {
   overflow: hidden;
 }
 
+.main::-webkit-scrollbar {
+  width: 0.2em;
+  background-color: transparent;
+}
+ 
+.main::-webkit-scrollbar-thumb {
+  background-color: #555;
+}
+
+
 .question-board {
   display: none;
   background: url(questions.png) no-repeat center center fixed;
@@ -247,6 +257,7 @@ textarea {
   text-align: center;
   font-weight: bold;
   animation: der 1s ease;
+  text-shadow: 1px 1px #fff;
 }
 
 @keyframes der {
