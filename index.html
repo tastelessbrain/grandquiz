@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Nerd Quiz</title>
+    <title>KNOW WHERE?</title>
     <link href="https://fonts.googleapis.com/css?family=Carrois+Gothic" rel="stylesheet">
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">-->
     <link rel="stylesheet" href="js/min.css">
@@ -23,45 +23,45 @@
             
             <div class="row orange">
                 
-                <textarea cols="40" rows="2">Jeopardy</textarea>
-                <button id="btn1">200</button>
-                <button id="btn2">400</button>
-                <button id="btn3">600</button>
-                <button id="btn4">800</button>
-                <button id="btn5">1000</button>
+                <textarea cols="40" rows="2">Family Feud</textarea>
+                <button id="btn1">100</button>
+                <button id="btn2">200</button>
+                <button id="btn3">300</button>
+                <button id="btn4">400</button>
+                <button id="btn5">500</button>
             </div>
             <div class="row blue">
                 <textarea cols="40" rows="2">Blue Marble</textarea>
-                <button id="btn6">200</button>
-                <button id="btn7">400</button>
-                <button id="btn8">600</button>
-                <button id="btn9">800</button>
-                <button id="btn10">1000</button>
+                <button id="btn6">100</button>
+                <button id="btn7">200</button>
+                <button id="btn8">300</button>
+                <button id="btn9">400</button>
+                <button id="btn10">500</button>
             </div>
             
             <div class="row pink">
-                <textarea cols="40" rows="2">Musik</textarea>
-                <button id="btn11">200</button>
-                <button id="btn12">400</button>
-                <button id="btn13">600</button>
-                <button id="btn14">800</button>
-                <button id="btn15">1000</button>
+                <textarea cols="40" rows="2">Wer war's?</textarea>
+                <button id="btn11">100</button>
+                <button id="btn12">200</button>
+                <button id="btn13">300</button>
+                <button id="btn14">400</button>
+                <button id="btn15">500</button>
             </div>
             <div class="row darkblue">
-                <textarea cols="40" rows="2">Wer war's?</textarea>
-                <button id="btn16">200</button>
-                <button id="btn17">400</button>
-                <button id="btn18">600</button>
-                <button id="btn19">800</button>
-                <button id="btn20">1000</button>
+                <textarea cols="40" rows="2">Hör mal!</textarea>
+                <button id="btn16">100</button>
+                <button id="btn17">200</button>
+                <button id="btn18">300</button>
+                <button id="btn19">400</button>
+                <button id="btn20">500</button>
             </div>
             <div class="row green">
-                <textarea cols="40" rows="2">Hör mal!</textarea>
-                <button id="btn21">200</button>
-                <button id="btn22">400</button>
-                <button id="btn23">600</button>
-                <button id="btn24">800</button>
-                <button id="btn25">1000</button>
+                <textarea cols="40" rows="2">What do you meme?</textarea>
+                <button id="btn21">100</button>
+                <button id="btn22">200</button>
+                <button id="btn23">300</button>
+                <button id="btn24">400</button>
+                <button id="btn25">500</button>
               
             </div>
             
@@ -146,7 +146,7 @@
         }
 
         function nextround() {
-            if ($(".question-board button").html() === "200") {
+            if ($(".question-board button").html() === "100") {
                 $(".question-board button").each(function() {
                     let button = $(this);
                     button.html(button.html() * 2);

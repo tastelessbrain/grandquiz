@@ -276,15 +276,18 @@ textarea {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 100vh;
 }
+
 .qimg{
-  width:30em;
-  height: 20em;
+  width: auto;
+  height: 70%;
   border-radius: 5px;
 }
 audio{
   display: block;
-
+  margin-bottom: 50%;
 }
 .modal{
   z-index: 2;

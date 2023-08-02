@@ -48,10 +48,11 @@ function showAns(name,question) {
     
 }
 
+//KATEGORIE 1
 $("#btn1").click(()=>{
     let img = ``; 
-    let questiontype ="Jedes Jahr werden davon 109 Millionen in DE verkauft.";
-    let name = "Was ist ein Schokoweihnachtsmann?"
+    let questiontype ="";
+    let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -59,8 +60,8 @@ $("#btn1").click(()=>{
 })
 $("#btn2").click(()=>{
     let img = ``; 
-    let questiontype ="Diese Kugel hat 336 Einkerbungen.";
-    let name = "Was ist ein Golfball?"
+    let questiontype ="";
+    let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -68,8 +69,8 @@ $("#btn2").click(()=>{
 })
 $("#btn3").click(()=>{
     let img = ``; 
-    let questiontype ="Ouagadougou";
-    let name = "Wie heißt die Hauptstadt von Burkina Faso?"
+    let questiontype ="";
+    let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -77,8 +78,8 @@ $("#btn3").click(()=>{
 })
 $("#btn4").click(()=>{
     let img = ``; 
-    let questiontype ="Es antwortet in allen Sprachen. Es spricht ohne Mund. Es hört ohne Ohren.";
-    let name = "Was ist ein Echo"
+    let questiontype ="";
+    let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -86,17 +87,19 @@ $("#btn4").click(()=>{
 })
 $("#btn5").click(()=>{
     let img = ``; 
-    let questiontype ="Adenin, Cytosin, Guanin, Thymin";
-    let name = "Was sind die 4 Basen der DNA?"
+    let questiontype ="";
+    let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
+
+//KATEGORIE 2
 $("#btn6").click(()=>{
     let img = ``; 
-    let questiontype ="Von der Sonne aus: Der wievielte Planet ist die Erde in unserem Sonnensystem?";
-    let name = "Der Dritte!"
+    let questiontype ="Welcher ist der zweithöchste Berd der Erde?";
+    let name = "K2 -  Godwin-Austen / Chhogori | 8.611 m"
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -104,8 +107,8 @@ $("#btn6").click(()=>{
 })
 $("#btn7").click(()=>{
     let img = ``; 
-    let questiontype ="Welches ist das schnellste Tier der Erde?";
-    let name = "Der Wanderfalke!"
+    let questiontype ="Welches ist das dichtestbesiedelte Land der Erde?";
+    let name = "Monaco / Bangladesh"
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -113,8 +116,8 @@ $("#btn7").click(()=>{
 })
 $("#btn8").click(()=>{
     let img = ``; 
-    let questiontype ="Schätzfrage: Aus wie viel Tonnen Plastik betseht der 'Great Pacific Garbage Patch?'";
-    let name = "79.000 Tonnen!"
+    let questiontype ="Welches Land hat die meisten aktiven Vulkane?";
+    let name = "Indonesien"
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -122,8 +125,8 @@ $("#btn8").click(()=>{
 })
 $("#btn9").click(()=>{
     let img = ``; 
-    let questiontype ="Nenne ein Land in dessen Name zweimal den Buchstaben 'B' enthält.";
-    let name = "Barbados, Zimbabwe, Antigua and Barbuda"
+    let questiontype ="Nenne drei Länder die mit 'J' beginnen!";
+    let name = "Jamaika, Japan, Jordanien, Jemen"
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -131,154 +134,156 @@ $("#btn9").click(()=>{
 })
 $("#btn10").click(()=>{
     let img = ``; 
-    let questiontype ="Welches ist das giftigste Tier der Erde?";
-    let name = "Seewespe (Qualle)"
+    let questiontype ="Was versteht man unter dem Kessler Effekt?";
+    let name = "Eine Kaskade and Kollisionen im Erdorbit."
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
+
+//KATEGORIE 3
 $("#btn11").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/weeknd.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welcher Song ist das? Titel + Interpret!";
-    let name = "Blinding Lights - The Weeknd "
-    btnFunction(audio,questiontype);
+    let img = ``; 
+    let questiontype ="Bis in die Unendlichkeit und noch viel weiter.";
+    let name = "Buzz Lightyear"
+    btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn12").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/shape.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welcher Song ist das? Translated Lyrics!";
-    let name = "Shape of You - Ed Sheeran"
-    btnFunction(audio,questiontype);
+    let img = ``; 
+    let questiontype ="Wenn ich wählen muss zwischen einem Übel und einem kleineren, dann ziehe ich es vor, überhaupt nicht zu wählen.";
+    let name = "Geralt von Riva"
+    btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn13").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/BHR.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welcher Song ist das? Translated Lyrics!";
-    let name = "Bohemian Rapsody - Queen"
-    btnFunction(audio,questiontype);
+    let img = ``; 
+    let questiontype ="Wer entschlüsselte (maßgeblich) die Enigma?";
+    let name = "Alan Turing"
+    btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn14").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/nttd.mp3" type="audio/mpeg"></audio>`; 
+    let audio = `<audio id="pop" controls><source src="./soundfiles/jvj.mp3" type="audio/mpeg"></audio>`; 
 	console.log($("audio#pop")[0]);
-    let questiontype ="Welcher Song ist das? Titel + Interpret!";
-    let name = "No Time to die - Billie Eilish/Hans Zimmer"
+    let questiontype ="Wer hat die Häftlingsnummer '24601'?";
+    let name = "Jean Valjean"
     btnFunction(audio,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn15").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/ourhouse.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welcher Song ist das? Titel + Interpret!";
-    let name = "Our House - Madness"
-    btnFunction(audio,questiontype);
+    let img = ``; 
+    let questiontype ="Ein Teil dieser Antworten würde die Bevölkerung verunsichern.";
+    let name = "Thomas de Maizière"
+    btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
+
+//KATEGORIE 4
 $("#btn16").click(()=>{
-    let img = ``; 
-    let questiontype ="Wer erfand die Glühbirne?";
-    let name = "Thomas Edison"
-    btnFunction(img,questiontype);
+    let audio = `<audio id="pop" controls><source src="./soundfiles/ok.mp3" type="audio/mpeg"></audio>`; 
+	console.log($("audio#pop")[0]);
+    let questiontype ="Welcher Song ist das?";
+    let name = "Casper & Kraftklub - Ganz schön okay"
+    btnFunction(audio,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn17").click(()=>{
-    let img = ``; 
-    let questiontype ="Wer umsegelte als erstes die Erde?";
-    let name = "Ferdinand Magellan"
-    btnFunction(img,questiontype);
+    let audio = `<audio id="pop" controls><source src="./soundfiles/tasten.mp3" type="audio/mpeg"></audio>`; 
+	console.log($("audio#pop")[0]);
+    let questiontype ="Welches Geräusch ist das?";
+    let name = "Computer-Tastatur"
+    btnFunction(audio,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn18").click(()=>{
-    let img = ``; 
-    let questiontype ="Wer entdeckte das Penecilin?";
-    let name = "Alexander Fleming"
-    btnFunction(img,questiontype);
+    let audio = `<audio id="pop" controls><source src="./soundfiles/kk.mp3" type="audio/mpeg"></audio>`; 
+	console.log($("audio#pop")[0]);
+    let questiontype ="Welches Geräusch ist das?";
+    let name = "Kronkorken"
+    btnFunction(audio,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn19").click(()=>{
-    let img = ``; 
-    let questiontype ="Wer war der erste Präsident der USA?";
-    let name = "George Washington"
-    btnFunction(img,questiontype);
+    let audio = `<audio id="pop" controls><source src="./soundfiles/creep.mp3" type="audio/mpeg"></audio>`; 
+	console.log($("audio#pop")[0]);
+    let questiontype ="Welcher Song ist das?";
+    let name = "Radiohead - Creep"
+    btnFunction(audio,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn20").click(()=>{
-    let img = ``; 
-    let questiontype ="Wer war James Webb?";
-    let name = "James Webb war ein US-amerikanischer Astronom und NASA-Verwaltungsbeamter. Er war der zweite Administrator der NASA von 1961 bis 1968 und trug wesentlich zur Entwicklung des Apollo-Programms bei."
+    let audio = `<audio id="pop" controls><source src="./soundfiles/ttl.mp3" type="audio/mpeg"></audio>`; 
+	console.log($("audio#pop")[0]);
+    let questiontype ="Welcher Song ist das?";
+    let name = "Soft Cell - Tainted Love"
+    btnFunction(audio,questiontype);
+    showAns(name,questiontype);
+    BackBtn();
+    
+})
+
+//KATEGORIE 5
+$("#btn21").click(()=>{
+    let img = `<img class="qimg" src="./qimg/wdym.jpg"/>`; 
+    let questiontype ="";
+    let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
-$("#btn21").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/netflix.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Was ist das?";
-    let name = "Netflix Intro!"
-    btnFunction(audio,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
 $("#btn22").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/chips.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Was hörst du hier?";
-    let name = "Chips Tüte öffnen!"
-    btnFunction(audio,questiontype);
+    let img = `<img class="qimg" src="./qimg/wdym8.jpg"/>`; 
+    let questiontype ="";
+    let name = ""
+    btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn23").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/straba.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Hör genau hin!";
-    let name = "Freiburger Straßenbahn!"
-    btnFunction(audio,questiontype);
+    let img = `<img class="qimg" src="./qimg/wdym11.jpg"/>`; 
+    let questiontype ="";
+    let name = ""
+    btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn24").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/RTW.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Die Sierene welcher Einsatzkräfte ist hier zu hören?";
-    let name = "Krankenwagen (RTW-Polizei-Feuerwehr)"
-    btnFunction(audio,questiontype);
+    let img = `<img class="qimg" src="./qimg/wdym12.png"/>`; 
+    let questiontype ="";
+    let name = ""
+    btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn25").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/waal.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Was ist hier zu hören?";
-    let name = "Waalgesang!"
-    btnFunction(audio,questiontype);
+    let img = `<img class="qimg" src="./qimg/wdym14.jpg"/>`; 
+    let questiontype ="";
+    let name = ""
+    btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
