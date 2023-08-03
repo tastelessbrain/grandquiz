@@ -18,7 +18,7 @@
   /* background-color: red; */
 }
 .indTeam {
-  margin: 1px 5px 5px 5px;
+  margin: 20px 5px 0px 5px;
   /* width: 40%; */
   /* margin-left: 2em; */
   background-color: rgb(40, 184, 176);
@@ -26,17 +26,19 @@
   padding: 5px;
 }
 .indTeam input {
-  width: 40%;
+  width: 65%;
   border:none;
   outline: none;
   margin-bottom: 5px;
 }
-.teamName{
-  color:#000;
+.teamName {
+  color: #000;
   font-weight: bold;
   border: none;
   outline: none;
   background: white;
+  width: 50%;
+  margin-left: 25%;
 }
 @media (max-width:375px) {
     .cont-team {

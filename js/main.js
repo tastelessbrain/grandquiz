@@ -51,7 +51,7 @@ function showAns(name,question) {
 //KATEGORIE 1
 $("#btn1").click(()=>{
     let img = ``; 
-    let questiontype ="";
+    let questiontype ="Top Suchbegriffe in Google:";
     let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
@@ -60,7 +60,7 @@ $("#btn1").click(()=>{
 })
 $("#btn2").click(()=>{
     let img = ``; 
-    let questiontype ="";
+    let questiontype ="Top 10 Erfolgreichste Musiker.";
     let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
