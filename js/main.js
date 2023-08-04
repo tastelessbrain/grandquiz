@@ -87,7 +87,7 @@ $("#btn4").click(()=>{
 })
 $("#btn5").click(()=>{
     let img = ``; 
-    let questiontype ="Welches sind die schwersten, heute auf dem Land lebenden, Säugetiere? <br>(2018)";
+    let questiontype ="Welches sind die 10 schwersten, heute auf dem Land lebenden, Säugetiere? <br>(2018)";
     let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
@@ -98,7 +98,7 @@ $("#btn5").click(()=>{
 //KATEGORIE 2
 $("#btn6").click(()=>{
     let img = ``; 
-    let questiontype ="Welcher ist der zweithöchste Berd der Erde?";
+    let questiontype ="Welcher ist der zweithöchste Berg der Erde?";
     let name = "K2 -  Godwin-Austen / Chhogori | 8.611 m"
     btnFunction(img,questiontype);
     showAns(name,questiontype);
@@ -182,8 +182,8 @@ $("#btn14").click(()=>{
 })
 $("#btn15").click(()=>{
     let img = ``; 
-    let questiontype ="Ein Teil dieser Antworten würde die Bevölkerung verunsichern.";
-    let name = "Thomas de Maizière"
+    let questiontype ="Phantasie ist wichtiger als Wissen, denn Wissen ist begrenzt.";
+    let name = "Albert Einstein"
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
@@ -202,20 +202,20 @@ $("#btn16").click(()=>{
     
 })
 $("#btn17").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/tasten.mp3" type="audio/mpeg"></audio>`; 
+    let audio = `<audio id="pop" controls><source src="./soundfiles/kk.mp3" type="audio/mpeg"></audio>`; 
 	console.log($("audio#pop")[0]);
     let questiontype ="Welches Geräusch ist das?";
-    let name = "Computer-Tastatur"
+    let name = "Kronkorken"
     btnFunction(audio,questiontype);
     showAns(name,questiontype);
     BackBtn();
     
 })
 $("#btn18").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/kk.mp3" type="audio/mpeg"></audio>`; 
+    let audio = `<audio id="pop" controls><source src="./soundfiles/tasten.mp3" type="audio/mpeg"></audio>`; 
 	console.log($("audio#pop")[0]);
     let questiontype ="Welches Geräusch ist das?";
-    let name = "Kronkorken"
+    let name = "Computer-Tastatur"
     btnFunction(audio,questiontype);
     showAns(name,questiontype);
     BackBtn();
