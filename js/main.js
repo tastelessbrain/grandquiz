@@ -8,7 +8,7 @@ function btnFunction(questiontype,question) {
     $(".quest").append(`<input class="backBtn" type="button" value="Back">`);
     $(".quest").append(`<input class="show" type="button" value="Show Answer">`);
     $(".quest").append(`<div class="imgcont">${questiontype}</div>`);
-    $(".questionEl").text(`${question}`);
+    $(".questionEl").html(`${question}`);
     $(".screenBtn").hide();
 }
 $(".screenBtn").hide();
@@ -51,16 +51,16 @@ function showAns(name,question) {
 //KATEGORIE 1
 $("#btn1").click(()=>{
     let img = ``; 
-    let questiontype ="Top Suchbegriffe in Google:";
+    let questiontype = "Top 10 - Suchbegriffe <br>Wähle: Schlagzeilen/Persönlichkeiten";
     let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
     BackBtn();
-    
 })
+
 $("#btn2").click(()=>{
     let img = ``; 
-    let questiontype ="Top 10 Erfolgreichste Musiker.";
+    let questiontype ="Welche Disziplinen gehören zum modernen olypischen Zehnkampf?<br>(2019)";
     let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
@@ -69,7 +69,7 @@ $("#btn2").click(()=>{
 })
 $("#btn3").click(()=>{
     let img = ``; 
-    let questiontype ="";
+    let questiontype ="Welche 10 Sprachen sind die meist gesprochenen Sprachen der Welt? <br>(2018)";
     let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
@@ -78,7 +78,7 @@ $("#btn3").click(()=>{
 })
 $("#btn4").click(()=>{
     let img = ``; 
-    let questiontype ="";
+    let questiontype ="Welche Länder stellten 2018 den meisten Wein her?";
     let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
@@ -87,7 +87,7 @@ $("#btn4").click(()=>{
 })
 $("#btn5").click(()=>{
     let img = ``; 
-    let questiontype ="";
+    let questiontype ="Welches sind die schwersten, heute auf dem Land lebenden, Säugetiere? <br>(2018)";
     let name = ""
     btnFunction(img,questiontype);
     showAns(name,questiontype);
