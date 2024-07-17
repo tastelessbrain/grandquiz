@@ -12,7 +12,7 @@ function btnFunction(questiontype,question) {
     $(".screenBtn").hide();
 }
 $(".screenBtn").hide();
-
+//Back Button after tile was selected
 function BackBtn() {
     $(".backBtn").click((()=>{
         $(".row").show();
@@ -30,6 +30,7 @@ function BackBtn() {
        
         }));
 }
+//Show Answer button after tile was selected
 function showAns(name,question) {
     $(".show").click((()=>{
         $(".show").toggleClass("showned")
@@ -47,8 +48,9 @@ function showAns(name,question) {
     }));
     
 }
-
+//Category buttons
 //KATEGORIE 1
+//values must be taken from sql db
 $("#btn1").click(()=>{
     let img = ``; 
     let questiontype = "Top 10 - Suchbegriffe <br>Wähle: Schlagzeilen/Persönlichkeiten";
