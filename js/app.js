@@ -3,8 +3,8 @@ const rootDiv = document.querySelector(".cont-team")
 const resetBtn = document.querySelector(".reset")
 const addTeamBtn = document.querySelector(".addTeamBtn")
 
+//Team Point Handler
 // const inputEl= parseInt(teamnuber)
-
 function inputFunctio() {
 }
 
@@ -29,7 +29,7 @@ function remove(inputId) {
 }
 
 
-
+//Adding, removing and reseting teams
 // Reset Button Function
 resetBtn.addEventListener("click",()=>{
     localStorage.clear()
@@ -37,12 +37,10 @@ resetBtn.addEventListener("click",()=>{
 })
 
 // remove a team
-
 function removeteam(inputId) {
     let x = document.getElementById(inputId)
     x.parentNode.remove();
 }
-
 
 // Add Team button function
 let count = 1;

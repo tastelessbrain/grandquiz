@@ -7,17 +7,11 @@
     <link href="https://fonts.googleapis.com/css?family=Carrois+Gothic" rel="stylesheet">
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">-->
     <link rel="stylesheet" href="js/min.css">
-
-
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style2.css">
-
-
 </head>
 
 <body>
-    
-
     <div class="question-board active" id="act">
         <div class="board">
             
@@ -74,33 +68,6 @@
         </div>
         
     </div>
-
-    <div class="points">
-        <div class="row">
-            <textarea class="player" cols="40" rows="1">Gruppe 1</textarea>
-            <textarea class="score" cols="40" rows="1">0</textarea>
-        </div>
-        <div class="row">
-            <textarea class="player" cols="40" rows="1">Gruppe 2</textarea>
-            <textarea class="score" cols="40" rows="1">0</textarea>
-        </div>
-        <div class="row">
-            <textarea class="player" cols="40" rows="1">Gruppe 3</textarea>
-            <textarea class="score" cols="40" rows="1">0</textarea>
-        </div>
-        <div class="row">
-            <textarea class="player45" cols="40" rows="1">Gruppe 4</textarea>
-            <textarea class="score45" cols="40" rows="1">0</textarea>
-        </div>
-        <div class="row">
-            <textarea class="player45" cols="40" rows="1">Gruppe 5</textarea>
-            <textarea class="score45" cols="40" rows="1">0</textarea>
-        </div>
-        <div class="row">
-            <textarea class="player45" cols="40" rows="1">Gruppe 6</textarea>
-            <textarea class="score45" cols="40" rows="1">0</textarea>
-        </div>
-    </div>
     <div class="main">
         <div class="cont-team">
             <div class="indTeam">
@@ -111,39 +78,18 @@
             </div>
         </div>
         <br>
-        <button class="addTeamBtn">add Team</button>
+        <button class="addTeamBtn">Add Team</button>
         <button class="reset">Reset</button>
     </div>
     <script src="app.js"></script>
-    <input type="button" class="screenBtn" value="Spieler" onclick="changeScreen()"></input>
     <!--<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>-->
     <script src='js/min.js'></script>
     <script src='js/main.js'></script>
     <script src='js/app.js'></script>
-
-
-
     <script>
         $(".question-board button").click(function() {
             $(this).toggleClass("used");
         });
-
-        $('body').keyup(function(e) {
-            if (e.keyCode == 39 || e.keyCode == 37) {
-                changeScreen();
-            }
-        });
-
-        function changeScreen() {
-            $(".question-board").toggleClass("active");
-            $(".points").toggleClass("active");
-
-            if ($(".screenBtn").attr('value') === "Spieler") {
-                $(".screenBtn").attr('value', 'Fragen');
-            } else {
-                $(".screenBtn").attr('value', 'Spieler');
-            }
-        }
 
         function nextround() {
             if ($(".question-board button").html() === "100") {
@@ -162,5 +108,4 @@
         }
     </script>
 </body>
-
 </html>
