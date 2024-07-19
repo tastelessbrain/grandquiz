@@ -1,8 +1,8 @@
-const axios = require('axios');
+import axios from "axios"
 
 
 // get data from endpoint and store it in var data
-async function fetchData() {
+export async function fetchData() {
     try {
         var response = await axios.get('http://localhost:3000/CombinedData');
         var fetchedData = response.data;

@@ -1,8 +1,10 @@
-const express = require("express");
-const sql = require("mssql");
+import express from "express"
+import axios from "axios"
+import cors from "cors"
+import sql from "mssql"
 
-
-const app = express();
+var app = express();
+app.use(cors())
 
 // SQL Server configuration
 var config = {
@@ -44,7 +46,7 @@ app.get("/QuestionsTable", (request, response) => {
         if (err) {
             console.error("Error executing query:", err);
         } else {
-            response.send(result.recordset); // Send query result as response
+            response.json(result.recordset); // Send query result as response
             console.dir(result.recordset);
         }
     });
