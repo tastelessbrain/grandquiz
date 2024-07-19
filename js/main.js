@@ -1,5 +1,7 @@
+import { fetchData } from './fetchData.js'; // Import of function fetchData
 
 console.log($(".orange").attr("style"));
+
 
 function btnFunction(questiontype,question) {
     $(".row").hide();
