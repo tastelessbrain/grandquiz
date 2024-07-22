@@ -107,5 +107,25 @@
             }
         }
     </script>
+    <script>
+        const socket = new WebSocket('ws://192.168.4.1:5678/');  // Verwenden Sie die IP-Adresse oder den Hostnamen Ihres Raspberry Pi
+
+        socket.onmessage = function(event) {
+            alert('Neue Nachricht vom ESP32: ' + event.data);
+	    console.log('Neue Nachricht vom ESP32: ' + event.data);
+        };
+
+        socket.onopen = function(event) {
+            console.log('Verbindung zum Websocket-Server hergestellt.');
+        };
+
+        socket.onclose = function(event) {
+            console.log('Verbindung zum Websocket-Server geschlossen.');
+        };
+
+        socket.onerror = function(error) {
+            console.log('Websocket-Fehler: ' + error.message);
+        };
+    </script>
 </body>
 </html>
