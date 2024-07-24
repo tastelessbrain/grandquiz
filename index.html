@@ -13,7 +13,7 @@
     <script type="text/javascript">
         var client;
         var playerNames = ["Spieler 1", "Spieler 2", "Spieler 3", "Spieler 4", "Spieler 5", "Spieler 6"]; // Spieler Namen
-        var notificationSound = new Audio('sound.mp3'); // Pfad zur Ton-Datei
+        var notificationSound = new Audio('soundfiles/sound.mp3'); // Pfad zur Ton-Datei
     
         function MQTTconnect() {
             client = new Paho.Client("192.168.4.1", 9001, "clientId" + new Date().getTime());
