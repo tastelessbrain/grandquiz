@@ -28,33 +28,10 @@ sql.connect(config, err => {
 });
 
 // Define route for fetching data from SQL Server
-app.get("/AnswersTable", (request, response) => {
-    // Execute a SELECT query
-    new sql.Request().query("SELECT * FROM dbo.answers", (err, result) => {
-        if (err) {
-            console.error("Error executing query:", err);
-        } else {
-            response.send(result.recordset); // Send query result as response
-            console.dir(result.recordset);
-        }
-    });
-});
 
-app.get("/QuestionsTable", (request, response) => {
+app.get("/GetData", (request, response) => {
     // Execute a SELECT query
-    new sql.Request().query("SELECT * FROM dbo.questions", (err, result) => {
-        if (err) {
-            console.error("Error executing query:", err);
-        } else {
-            response.json(result.recordset); // Send query result as response
-            console.dir(result.recordset);
-        }
-    });
-});
-
-app.get("/CombinedData", (request, response) => {
-    // Execute a SELECT query
-    new sql.Request().query("SELECT Questions.content AS QuestionContent, Questions.questiontype AS QuestionType, Answers.Answer1, Answers.Answer2, Answers.Answer3, Answers.Answer4 FROM dbo.Questions JOIN  dbo.Answers ON Questions.ID = Answers.questionID;", (err, result) => {
+    new sql.Request().query("SELECT * FROM dbo.questions;", (err, result) => {
         if (err) {
             console.error("Error executing query :", err);
         } else {

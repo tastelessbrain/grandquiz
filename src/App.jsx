@@ -11,7 +11,7 @@ export const App = () => {
 
   const getDataFromBackend = async () => {
     try{
-      await axios.get("http://localhost:3000/QuestionsTable").then(
+      await axios.get("http://localhost:3000/GetData").then(
         (result) => {
           setData(result.data)
         }
@@ -31,22 +31,47 @@ export const App = () => {
   //TODO: Baue eine Componente für die Button mit verschiedenen Props wie z.b. Frage, Antworten,
   //TODO  Gruppen anzeige Screen 
   //TODO: Gruppen Punkte Counter Componente (Punkte Stand Decrease Increase button machen Punkte Variable in dieser Componente)
+  //TODO: Kategorien (Questiontypes durch veränderbare Variablen ersetzen)
 
   //HTML DOKUMENTE
-  return (
-<div>
-  <div>Hello World</div>
-  { 
-    data.map((item) => {
-      
-      if(item.ID == 1){
-        return <MyButton key={item.ID} color={"red"}/>
-      }else{
-        return <button onClick={( ) => console.log(item.Content) } key={item.ID} />
-      }
-      
-    })
-  }
-</div>
-  )
+const questions = ["SHORT-LIST","Blue Marble","Wer Wars?","WDYM","Riddle me this!"]
+
+return (
+  <div>
+    <div style={{ display: "flex", flexDirection: "row",}}>
+      {questions.map((question) => {
+        const questionTypeData = data.filter((item) => item.QuestionType === question);
+
+        return (
+          <div style={{ display: "flex", flexDirection: "column",width: "16.6%"}}>
+            <div style={{ textAlign: "center", fontSize:"3em",fontWeight: "400" }}>{question}</div>
+            {questionTypeData.map((item) => {
+              let color;
+              switch (item.QuestionType) {
+                case "SHORT-LIST":
+                  color = "red";
+                  break;
+                case "Blue Marble":
+                  color = "blue";
+                  break;
+                case "Wer Wars?":
+                  color = "green";
+                  break;
+                case "WDYM":
+                  color = "orange";
+                  break;
+                case "Riddle me this!":
+                  color = "black";
+                  break;
+                default:
+                  color = "gray"; // default color
+              }
+              return <MyButton title={item.Points} key={item.ID} color="white" backgroundColor={color} height="150px" fontSize="2em" borderRadius="5px" borderColor="white" />;
+            })}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+);
 }
