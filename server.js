@@ -1,55 +1,50 @@
-const express = require("express");
-const sql = require("mssql");
-
+const express = require('express');
+const mysql = require('mysql2');
+const cors = require('cors');
 const app = express();
+const bodyParser = require('body-parser');
 
-// SQL Server configuration
-var config = {
-    "user": "project_quiz", // Database username
-    "password": "12345678", // Database password
-    "server": "localhost", // Server IP address
-    "port": 56353,
-    "database": "project_quiz", // Database name
-    "options": {
-        "encrypt": false, // Disable encryption
-        "trustservercertificates": true
+// Use bodyParser to parse incoming requests
+app.use(bodyParser.json());
+
+// Enable CORS
+app.use(cors());
+
+// Create a connection pool
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'p42', // replace with your MySQL username
+  password: '12345678', // replace with your MySQL password
+  database: 'project_42',
+  port: 3306,
+});
+
+// Helper function to execute queries
+function executeQuery(query, params, res) {
+  pool.query(query, params, (error, results) => {
+    if (error) {
+      console.error('Database query error: ', error);
+      res.status(500).send('Database error');
+    } else {
+      res.json(results);
     }
+  });
 }
 
-// Connect to SQL Server
-sql.connect(config, err => {
-    if (err) {
-        throw err;
-    }
-    console.log("Connection Successful!");
+// Dynamic query endpoint (VERY CAREFUL HERE!)
+app.post('/query', (req, res) => {
+  const query = req.body.query;
+  
+  // Security: Sanitize input or add some validation for allowed queries.
+  if (typeof query !== 'string') {
+    return res.status(400).send('Invalid query string');
+  }
+  
+  // Execute the query
+  executeQuery(query, [], res);
 });
 
-// Define route for fetching data from SQL Server
-app.get("/answers", (request, response) => {
-    // Execute a SELECT query
-    new sql.Request().query("SELECT * FROM dbo.answers", (err, result) => {
-        if (err) {
-            console.error("Error executing query:", err);
-        } else {
-            response.send(result.recordset); // Send query result as response
-            console.dir(result.recordset);
-        }
-    });
-});
-
-app.get("/questions", (request, response) => {
-    // Execute a SELECT query
-    new sql.Request().query("SELECT * FROM dbo.questions", (err, result) => {
-        if (err) {
-            console.error("Error executing query:", err);
-        } else {
-            response.send(result.recordset); // Send query result as response
-            console.dir(result.recordset);
-        }
-    });
-});
-
-// Start the server on port 3000
+// Start the server
 app.listen(3000, () => {
-    console.log("Listening on port 3000...");
+  console.log('Server running on port 3000');
 });
