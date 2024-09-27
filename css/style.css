@@ -15,7 +15,7 @@ html, body {
 
 .question-board {
   display: none;
-  background: url(questions.png) no-repeat center center fixed;
+  /*background: url(questions.png) no-repeat center center fixed;*/
   background-size: cover;
   width: 100vw;
   height: 100vh;
@@ -399,4 +399,18 @@ justify-content:space-around;*/
 .media-container {
   text-align: center;
   margin: 20px auto;
+}
+
+/* Hintergrundvideo */
+#background-video {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -1;
+  transform: translate(-50%, -50%);
+  background-size: cover;
 }
