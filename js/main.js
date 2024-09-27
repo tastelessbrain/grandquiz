@@ -1,292 +1,113 @@
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners to all buttons
+            for (let i = 1; i <= 25; i++) {
+                document.getElementById(`btn${i}`).addEventListener('click', () => handleButtonClick(i));
+            }
+        });
 
-console.log($(".orange").attr("style"));
-
-function btnFunction(questiontype,question) {
-    $(".row").hide();
-    $(".round-info").hide();
-    $(".quest").show();
-    $(".quest").append(`<input class="backBtn" type="button" value="Back">`);
-    $(".quest").append(`<input class="show" type="button" value="Show Answer">`);
-    $(".quest").append(`<div class="imgcont">${questiontype}</div>`);
-    $(".questionEl").html(`${question}`);
-    $(".screenBtn").hide();
-}
-$(".screenBtn").hide();
-//Back Button after tile was selected
-function BackBtn() {
-    $(".backBtn").click((()=>{
-        $(".row").show();
-        $(".round-info").show();
-        $(".quest").hide();
-        $(".backBtn").hide();
-        $(".show").hide();
-        // $(".screenBtn").show();
-        $(".questionEl").show();
-        $(".imgcont").hide();
-        for (let index = 0; index < $("audio#pop").length; index++) {
-            $("audio#pop")[index].pause();
-            $("audio#pop").hide();
+        function handleButtonClick(buttonId) {
+            fetchQuestionData(buttonId)
+                .then(data => displayQuestion(data))
+                .catch(error => console.error('Error fetching question data:', error));
         }
-       
-        }));
-}
-//Show Answer button after tile was selected
-function showAns(name,question) {
-    $(".show").click((()=>{
-        $(".show").toggleClass("showned")
-        $(".questionEl").text(`${name}`)
-        $(".quest").show();
-        if ($(".show").attr("class") === "show showned") {
-            console.log("wow");
-            $(".questionEl").text(`${name}`)
-            $(".show").attr('value', 'Show Question');
-               
-        }else{
-            $(".questionEl").text(`${question}`);
-            $(".show").attr('value', 'Show Answer');
+
+        function fetchQuestionData(buttonId) {
+            return fetch('http://192.168.4.1:3000/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: `
+                    SELECT Fragen.FRAGE, Fragen.ANTWORT, Fragen.FRAGE_TYP, Medien.Media, Medien.Type AS MediaType
+                    FROM Fragen
+                    LEFT JOIN Medien ON Fragen.MEDIA = Medien.ID
+                    WHERE Fragen.ID = ${buttonId}
+                ` })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            });
         }
-    }));
-    
-}
-//Category buttons
-//KATEGORIE 1
-//values must be taken from sql db
-$("#btn1").click(()=>{
-    let img = ``; 
-    let questiontype = "Top 10 - Suchbegriffe <br>Wähle: Schlagzeilen/Persönlichkeiten";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-})
 
-$("#btn2").click(()=>{
-    let img = ``; 
-    let questiontype ="Welche Disziplinen gehören zum modernen olypischen Zehnkampf?<br>(2019)";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn3").click(()=>{
-    let img = ``; 
-    let questiontype ="Welche 10 Sprachen sind die meist gesprochenen Sprachen der Welt? <br>(2018)";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn4").click(()=>{
-    let img = ``; 
-    let questiontype ="Welche Länder stellten 2018 den meisten Wein her?";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn5").click(()=>{
-    let img = ``; 
-    let questiontype ="Welches sind die 10 schwersten, heute auf dem Land lebenden, Säugetiere? <br>(2018)";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
+        function displayQuestion(data) {
+            console.log('Empfangene Daten:', data);
+            const questionContainer = document.querySelector('.quest');
+            questionContainer.innerHTML = '';
+        
+            if (data[0].FRAGE) {
+                const questionEl = document.createElement('h1');
+                questionEl.className = 'questionEl';
+                questionEl.innerHTML = data[0].FRAGE;
+                questionEl.dataset.question = data[0].FRAGE;
+                questionContainer.appendChild(questionEl);
+            }
+        
+            if (data[0].MediaType === 'Bild' && data[0].Media) {
+                const imgEl = document.createElement('img');
+                imgEl.className = 'qimg';
+                imgEl.src = data[0].Media;
+                questionContainer.appendChild(imgEl);
+            }
+        
+            if (data[0].MediaType === 'Audio' && data[0].Media) {
+                const audioEl = document.createElement('audio');
+                audioEl.className = 'qaudio';
+                audioEl.controls = true;
+                const sourceEl = document.createElement('source');
+                sourceEl.src = data[0].Media;
+                sourceEl.type = 'audio/mpeg';
+                audioEl.appendChild(sourceEl);
+                questionContainer.appendChild(audioEl);
+            }
+        
+            // Button-Container erstellen
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'button-container';
+        
+            const backBtn = document.createElement('input');
+            backBtn.type = 'button';
+            backBtn.className = 'backBtn';
+            backBtn.value = 'Back';
+            backBtn.addEventListener('click', handleBackButtonClick);
+            buttonContainer.appendChild(backBtn);
+        
+            const showBtn = document.createElement('input');
+            showBtn.type = 'button';
+            showBtn.className = 'show';
+            showBtn.value = 'Show Answer';
+            showBtn.addEventListener('click', () => handleShowButtonClick(data[0].ANTWORT));
+            buttonContainer.appendChild(showBtn);
+        
+            questionContainer.appendChild(buttonContainer);
+        
+            const rows = document.querySelectorAll('.board .row');
+            rows.forEach(row => row.style.display = 'none');
+            document.querySelector('.round-info').style.display = 'none';
+            questionContainer.style.display = 'block';
+        }
+        
 
-//KATEGORIE 2
-$("#btn6").click(()=>{
-    let img = ``; 
-    let questiontype ="Welcher ist der zweithöchste Berg der Erde?";
-    let name = "K2 -  Godwin-Austen / Chhogori | 8.611 m"
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn7").click(()=>{
-    let img = ``; 
-    let questiontype ="Welches ist das dichtestbesiedelte Land der Erde?";
-    let name = "Monaco / Bangladesh"
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn8").click(()=>{
-    let img = ``; 
-    let questiontype ="Welches Land hat die meisten aktiven Vulkane?";
-    let name = "Indonesien"
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn9").click(()=>{
-    let img = ``; 
-    let questiontype ="Nenne drei Länder die mit 'J' beginnen!";
-    let name = "Jamaika, Japan, Jordanien, Jemen"
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn10").click(()=>{
-    let img = ``; 
-    let questiontype ="Was versteht man unter dem Kessler Effekt?";
-    let name = "Eine Kaskade and Kollisionen im Erdorbit."
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
+        function handleBackButtonClick() {
+            const rows = document.querySelectorAll('.board .row');
+            rows.forEach(row => row.style.display = 'block');
+            document.querySelector('.round-info').style.display = 'block';
+            document.querySelector('.quest').style.display = 'none';
+        }
 
-//KATEGORIE 3
-$("#btn11").click(()=>{
-    let img = ``; 
-    let questiontype ="Bis in die Unendlichkeit und noch viel weiter.";
-    let name = "Buzz Lightyear"
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn12").click(()=>{
-    let img = ``; 
-    let questiontype ="Wenn ich wählen muss zwischen einem Übel und einem kleineren, dann ziehe ich es vor, überhaupt nicht zu wählen.";
-    let name = "Geralt von Riva"
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn13").click(()=>{
-    let img = ``; 
-    let questiontype ="Wer entschlüsselte (maßgeblich) die Enigma?";
-    let name = "Alan Turing"
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn14").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/jvj.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Wer hat die Häftlingsnummer '24601'?";
-    let name = "Jean Valjean"
-    btnFunction(audio,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn15").click(()=>{
-    let img = ``; 
-    let questiontype ="Phantasie ist wichtiger als Wissen, denn Wissen ist begrenzt.";
-    let name = "Albert Einstein"
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
+        function handleShowButtonClick(answer) {
+            const showBtn = document.querySelector('.show');
+            const questionEl = document.querySelector('.questionEl');
 
-//KATEGORIE 4
-$("#btn16").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/ok.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welcher Song ist das?";
-    let name = "Casper & Kraftklub - Ganz schön okay"
-    btnFunction(audio,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn17").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/kk.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welches Geräusch ist das?";
-    let name = "Kronkorken"
-    btnFunction(audio,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn18").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/tasten.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welches Geräusch ist das?";
-    let name = "Computer-Tastatur"
-    btnFunction(audio,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn19").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/creep.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welcher Song ist das?";
-    let name = "Radiohead - Creep"
-    btnFunction(audio,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn20").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/ttl.mp3" type="audio/mpeg"></audio>`; 
-	console.log($("audio#pop")[0]);
-    let questiontype ="Welcher Song ist das?";
-    let name = "Soft Cell - Tainted Love"
-    btnFunction(audio,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-
-//KATEGORIE 5
-$("#btn21").click(()=>{
-    let img = `<img class="qimg" src="./qimg/wdym.jpg"/>`; 
-    let questiontype ="";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn22").click(()=>{
-    let img = `<img class="qimg" src="./qimg/wdym8.jpg"/>`; 
-    let questiontype ="";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn23").click(()=>{
-    let img = `<img class="qimg" src="./qimg/wdym11.jpg"/>`; 
-    let questiontype ="";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn24").click(()=>{
-    let img = `<img class="qimg" src="./qimg/wdym12.png"/>`; 
-    let questiontype ="";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
-$("#btn25").click(()=>{
-    let img = `<img class="qimg" src="./qimg/wdym14.jpg"/>`; 
-    let questiontype ="";
-    let name = ""
-    btnFunction(img,questiontype);
-    showAns(name,questiontype);
-    BackBtn();
-    
-})
+            if (showBtn.classList.contains('showned')) {
+                showBtn.classList.remove('showned');
+                showBtn.value = 'Show Answer';
+                questionEl.innerHTML = questionEl.dataset.question;
+            } else {
+                showBtn.classList.add('showned');
+                showBtn.value = 'Show Question';
+                questionEl.innerHTML = answer;
+            }
+        }
