@@ -9,6 +9,69 @@
     <link rel="stylesheet" href="js/min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/style2.css">
+    <script src="js/paho.js"></script>
+    <script type="text/javascript">
+        var client;
+        var playerNames = ["Spieler 1", "Spieler 2", "Spieler 3", "Spieler 4", "Spieler 5", "Spieler 6"]; // Spieler Namen
+        var notificationSound = new Audio('soundfiles/sound.mp3'); // Pfad zur Ton-Datei
+    
+        function MQTTconnect() {
+            client = new Paho.Client("192.168.4.1", 9001, "clientId" + new Date().getTime());
+            var options = {
+                timeout: 3,
+                onSuccess: onConnect,
+                onFailure: function (message) {
+                    console.log("Connection failed: " + message.errorMessage);
+                    setTimeout(MQTTconnect, 10000);
+                }
+            };
+            client.connect(options);
+            client.onMessageArrived = onMessageArrived;
+        }
+    
+        function onConnect() {
+            console.log("Connected to MQTT Broker");
+            client.subscribe("test/topic");
+        }
+    
+        function onMessageArrived(message) {
+            var buttonIndex = parseInt(message.payloadString.replace("Knopf", "")) - 1;
+            showNotification(playerNames[buttonIndex]);
+        }
+    
+        function showNotification(message) {
+            notificationSound.play();
+            var notification = document.createElement("div");
+            notification.className = "notification";
+            notification.innerText = message;
+            document.body.appendChild(notification);
+            setTimeout(function() {
+                document.body.removeChild(notification);
+            }, 3000); // Popup verschwindet nach 3000 Millisekunden (3 Sekunden)
+        }
+    
+        window.onload = MQTTconnect;
+    </script>
+    <style>
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35%;
+            padding: 20px;
+            background-color: #f2f2f2;
+            color: #000000;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+            height: 30%;
+            font-variant-caps: petite-caps;
+            font-size: 6em;
+            line-height: 2.5em;
+    }
+    </style>
 </head>
 
 <body>
