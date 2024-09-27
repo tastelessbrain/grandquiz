@@ -1,4 +1,3 @@
-/*M!999999\- enable the sandbox mode */ 
 -- MariaDB dump 10.19-11.5.2-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: project_42

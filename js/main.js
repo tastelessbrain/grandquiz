@@ -12,7 +12,7 @@
         }
 
         function fetchQuestionData(buttonId) {
-            return fetch('http://localhost:3000/query', {
+            return fetch('http://192.168.4.1:3000/query', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
