@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Database</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Edit Categories and Questions.</h1>
+    <form id= "categoryForm">
+        <br><br>
+        <fieldset>
+            <legend>Kategorien bearbeiten:</legend>
+            <div class="form-group">
+                <label for="category1">Kategorie 1:</label>
+                <input type="text" id="category1" name="category1" placeholder="Sample value 1">
+            </div>
+            <div class="form-group">
+                <label for="category2">Kategorie 2:</label>
+                <input type="text" id="category2" name="category2" placeholder="Sample value 2">
+            </div>
+            <div class="form-group">
+                <label for="category3">Kategorie 3:</label>
+                <input type="text" id="category3" name="category3" placeholder="Sample value 3">
+            </div>
+            <div class="form-group">
+                <label for="category4">Kategorie 4:</label>
+                <input type="text" id="category4" name="category4" placeholder="Sample value 4">
+            </div>
+            <div class="form-group">
+                <label for="category5">Kategorie 5:</label>
+                <input type="text" id="category5" name="category5" placeholder="Sample value 5">
+            </div>
+            <br><br>
+            <input type="submit" value="Save Categories">
+        </fieldset>
+        </form>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <br><br>
+        <fieldset>
+            <legend>Frage bearbeiten:</legend>
+            <div class="form-group">
+                <label for="kategorie">Kategorie:</label>
+                <select id="kategorie" name="kategorie">
+                    <option value="none">None</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fragennummer">Fragennummer:</label>
+                <select id="fragennummer" name="fragennummer">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="frage">Frage:</label>
+                <input type="text" id="frage" name="frage">
+            </div>
+            <div class="form-group">
+                <label for="antwort">Antwort:</label>
+                <input type="text" id="antwort" name="antwort">
+            </div>
+            <div class="form-group">
+                <label for="fragentyp">Fragentyp:</label>
+                <select id="fragentyp" name="fragentyp">
+                    <option value="t">Text</option>
+                    <option value="a">Audio</option>
+                    <option value="p">Picture</option>
+                    <option value="ta">Text + Audio</option>
+                    <option value="tp">Text + Picture</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="mediafile">Mediafile:</label>
+                <select id="mediafile" name="mediafile">
+                    <option value="none">None</option>
+                    <option value="data">DB to be connected</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="mediatype">Mediatype:</label>
+                <select id="mediatype" name="mediatype">
+                    <option value="none">None</option>
+                    <option value="audio">Audio</option>
+                    <option value="picture">Picture</option>
+                </select>
+            </div>
+            <br><br>
+            <input type="submit" value="Save">
+        </fieldset>
+    </form>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        fetch('http://localhost:3000/query', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ query: 'SELECT id, NAME FROM Kategorien' })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Fetched data:', data); // Debugging: Log the fetched data
+                            if (data.length > 0) {
+                                // Assuming the order of categories is important and matches the input fields
+                                const placeholders = data.map(item => item.NAME); // Use 'NAME' instead of 'name'
+                                console.log('Placeholders:', placeholders); // Debugging: Log the placeholders array
+                                document.getElementById('category1').placeholder = placeholders[0] || '';
+                                document.getElementById('category2').placeholder = placeholders[1] || '';
+                                document.getElementById('category3').placeholder = placeholders[2] || '';
+                                document.getElementById('category4').placeholder = placeholders[3] || '';
+                                document.getElementById('category5').placeholder = placeholders[4] || '';
+
+                                // Populate the select menu with category names and IDs
+                                const selectMenu = document.getElementById('kategorie');
+                                data.forEach(item => {
+                                    const option = document.createElement('option');
+                                    option.value = item.id; // Use the category ID as the value
+                                    option.textContent = item.NAME; // Display the category name
+                                    selectMenu.appendChild(option);
+                                });
+                            }
+                        })
+                        .catch(error => console.error('Error fetching sample values:', error));
+                    });
+                    document.getElementById('categoryForm').addEventListener('submit', function(event) {
+                        event.preventDefault();
+                        const categories = {
+                            category1: document.getElementById('category1').value,
+                            category2: document.getElementById('category2').value,
+                            category3: document.getElementById('category3').value,
+                            category4: document.getElementById('category4').value,
+                            category5: document.getElementById('category5').value
+                        };
+                    
+                        fetch('http://localhost:3000/setcategories', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(categories)
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            console.log('Update response:', data); // Debugging: Log the update response
+                            alert('Categories updated successfully');
+                        })
+                        .catch(error => console.error('Error updating categories:', error));
+                    });
+                    
+                    // Add event listener to fetch question data based on selected category and question number
+                    document.getElementById('kategorie').addEventListener('change', fetchQuestionData);
+                    document.getElementById('fragennummer').addEventListener('change', fetchQuestionData);
+
+                    function fetchQuestionData() {
+                        const categoryId = document.getElementById('kategorie').value;
+                        const questionNumber = document.getElementById('fragennummer').value;
+                    
+                        if (categoryId !== 'none' && questionNumber) {
+                            const query = `SELECT Fragen.FRAGE, Fragen.ANTWORT, Fragen.FRAGE_TYP, Medien.Media, Medien.Type AS MediaType FROM Fragen LEFT JOIN Medien ON Fragen.MEDIA = Medien.ID WHERE Fragen.Kategorie = ${categoryId} AND Fragen.FNUMBER = ${questionNumber}`;
+                            fetch('http://localhost:3000/query', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ query: query })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Fetched question data:', data); // Debugging: Log the fetched question data
+                                if (data.length > 0) {
+                                    const question = data[0];
+                                    document.getElementById('frage').value = question.FRAGE || '';
+                                    document.getElementById('antwort').value = question.ANTWORT || '';
+                                    document.getElementById('frage_typ').value = question.FRAGE_TYP || '';
+                                    document.getElementById('media').value = question.Media || '';
+                                    document.getElementById('media_type').value = question.MediaType || '';
+                                }
+                            })
+                            .catch(error => console.error('Error fetching question data:', error));
+                        }}
+                </script>
+</body>
+</html>                     

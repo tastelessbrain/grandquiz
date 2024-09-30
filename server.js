@@ -44,6 +44,40 @@ app.post('/query', (req, res) => {
   executeQuery(query, [], res);
 });
 
+// Endpoint to update category names
+app.post('/setcategories', (req, res) => {
+  const categories = req.body;
+  const queries = [
+    'UPDATE Kategorien SET NAME = ? WHERE id = 1',
+    'UPDATE Kategorien SET NAME = ? WHERE id = 2',
+    'UPDATE Kategorien SET NAME = ? WHERE id = 3',
+    'UPDATE Kategorien SET NAME = ? WHERE id = 4',
+    'UPDATE Kategorien SET NAME = ? WHERE id = 5'
+  ];
+
+  const params = [
+    [categories.category1],
+    [categories.category2],
+    [categories.category3],
+    [categories.category4],
+    [categories.category5]
+  ];
+
+  let completedQueries = 0;
+  queries.forEach((query, index) => {
+    pool.query(query, params[index], (error, results) => {
+      if (error) {
+        console.error('Database query error: ', error);
+        return res.status(500).send('Database error');
+      }
+      completedQueries++;
+      if (completedQueries === queries.length) {
+        res.send('Categories updated successfully');
+      }
+    });
+  });
+});
+
 // Start the server
 app.listen(3000, () => {
   console.log('Server running on port 3000');
