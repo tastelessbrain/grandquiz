@@ -181,18 +181,22 @@
         });
 
         function nextround() {
-            if ($(".question-board button").html() === "100") {
-                $(".question-board button").each(function() {
+            let firstPointValue = parseInt($(".question-board button:not(.category-button)").first().html());
+                
+            if (firstPointValue === 100) {
+                $(".question-board button:not(.category-button)").each(function() {
                     let button = $(this);
-                    button.html(button.html() * 2);
+                    let currentValue = parseInt(button.html());
+                    button.html(currentValue * 2);
                 });
                 $(".round-info").attr('value', 'Punkte halbieren');
             } else {
-                $(".question-board button").each(function() {
+                $(".question-board button:not(.category-button)").each(function() {
                     let button = $(this);
-                    button.html(button.html() / 2);
-                    $(".round-info").attr('value', 'Punkte verdoppeln');
+                    let currentValue = parseInt(button.html());
+                    button.html(currentValue / 2);
                 });
+                $(".round-info").attr('value', 'Punkte verdoppeln');
             }
         }
     </script>
