@@ -20,7 +20,7 @@
           });
     </script>
     <br></br>
-    <form id="upload">
+    <form id="upload" action="/upload" method="POST" enctype="multipart/form-data">
         <fieldset>
             <legend>Upload pictures or audio files.</legend>
             <!-- Existing form elements -->
@@ -29,11 +29,11 @@
             <div class="form-group">
                 <label for="mediatype">Mediatype:</label>
                 <select id="mediatype" name="mediatype">
-                  <option value="Audio">Audio</option>
-                  <option value="Bild">Picture</option>
+                    <option value="Audio">Audio</option>
+                    <option value="Bild">Picture</option>
                 </select>
-              </div>
-            <legend>Info:  Only one File at a time.</legend>
+            </div>
+            <legend>Info: Only one File at a time.</legend>
             <br><br>
             <input type="submit" value="Upload">
         </fieldset>
