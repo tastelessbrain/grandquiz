@@ -19,26 +19,30 @@
 }
 .indTeam {
   margin: 20px 5px 0px 5px;
-  /* width: 40%; */
-  /* margin-left: 2em; */
+  width: 80% !important;
+  margin-left: 2em;
   background-color: rgb(40, 184, 176);
   border-radius: 5px;
   padding: 5px;
 }
 .indTeam input {
-  width: 65%;
-  border:none;
+  width: 75%;
+  border: none;
   outline: none;
   margin-bottom: 5px;
+  font-size: 2em;
+  font-weight: bold;
 }
+
 .teamName {
   color: #000;
   font-weight: bold;
   border: none;
   outline: none;
   background: white;
-  width: 50%;
-  margin-left: 25%;
+  width: 75%;
+  margin-left: 12.5%;
+  font-size: 2em;
 }
 @media (max-width:375px) {
     .cont-team {
