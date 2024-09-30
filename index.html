@@ -81,7 +81,8 @@
     <div class="question-board active" id="act">
         <div class="board">
             <div class="row orange">
-                <textarea cols="40" rows="2">Short-List</textarea>
+                <button id="cat1" class= category-button>Short-List</button>
+		
                 <button id="btn1">100</button>
                 <button id="btn2">200</button>
                 <button id="btn3">300</button>
@@ -89,7 +90,8 @@
                 <button id="btn5">500</button>
             </div>
             <div class="row blue">
-                <textarea cols="40" rows="2">Blue Marble</textarea>
+		<button id="cat2" class="category-button">Blue Marble</button>
+		
                 <button id="btn6">100</button>
                 <button id="btn7">200</button>
                 <button id="btn8">300</button>
@@ -97,7 +99,8 @@
                 <button id="btn10">500</button>
             </div>
             <div class="row pink">
-                <textarea cols="40" rows="2">Wer war's?</textarea>
+                <button id="cat3" class="category-button">Wer wars?</button>
+		
                 <button id="btn11">100</button>
                 <button id="btn12">200</button>
                 <button id="btn13">300</button>
@@ -105,7 +108,8 @@
                 <button id="btn15">500</button>
             </div>
             <div class="row darkblue">
-                <textarea cols="40" rows="2">Hör mal!</textarea>
+                <button id="cat4" class="category-button">Hör mal!</button>
+		
                 <button id="btn16">100</button>
                 <button id="btn17">200</button>
                 <button id="btn18">300</button>
@@ -113,7 +117,8 @@
                 <button id="btn20">500</button>
             </div>
             <div class="row green">
-                <textarea cols="40" rows="2">What do you meme?</textarea>
+                <button id="cat5" class="category-button">What do you meme?</button>
+		
                 <button id="btn21">100</button>
                 <button id="btn22">200</button>
                 <button id="btn23">300</button>
@@ -161,7 +166,7 @@
             })
             .then(response => response.json())
             .then(categories => {
-                const textareas = document.querySelectorAll('.board .row textarea');
+                const textareas = document.querySelectorAll('.category-button');
                 categories.forEach((category, index) => {
                     if (textareas[index]) {
                         textareas[index].textContent = category.NAME;

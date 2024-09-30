@@ -62,6 +62,17 @@ textarea {
   text-shadow: 3px 3px #000;
 }
 
+.category-button{
+  margin-bottom: 0.5em;
+  background: lightblue;
+  width: 95% !important;
+  margin-left: 2.5%;
+  border-radius: 1em;
+  opacity: 90%;
+  color: black !important;
+  text-shadow: 3px 3px white !important;
+}
+
 .question-board button {
   width: 100%;
   height: 15%;
@@ -201,7 +212,7 @@ textarea {
   position: absolute;
   color: #000;
   bottom: 5px;
-  right: 20em;
+  right: 12.2%;
 }
 
 .screenBtn {
