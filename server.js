@@ -5,6 +5,7 @@ const app = express();
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs'); // Import the fs module
 
 // Use bodyParser to parse incoming requests
 app.use(bodyParser.json());
@@ -107,41 +108,56 @@ app.post('/updateQuestion', (req, res) => {
 });
 
 //Mediaupload
-// Define storage configurations
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const mediaType = req.body.mediatype;
-    let uploadPath = '';
-    if (mediaType === 'Bild') {
-      uploadPath = path.join(__dirname, 'grandquiz', 'qimg');
-    } else if (mediaType === 'Audio') {
-      uploadPath = path.join(__dirname, 'grandquiz', 'soundfiles');
-    } else {
-      return cb(new Error('Invalid media type'), null);
-    }
-    cb(null, uploadPath);
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname); // You might want to handle duplicate filenames
-  },
-});
-
+// Update multer configuration to use memory storage
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Endpoint to handle media uploads
 app.post('/uploadMedia', upload.single('file'), (req, res) => {
   const mediaType = req.body.mediatype;
-  const filePath = path.join('./', req.file.path); // Adjust the path as needed
+  if (!mediaType) {
+    return res.status(400).send('No media type provided');
+  }
 
-  // Insert the media information into the database
-  const insertQuery = 'INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)';
-  const params = [mediaType, filePath];
+  let uploadPath = '';
+  if (mediaType === 'Bild') {
+    uploadPath = path.join(__dirname, 'grandquiz', 'qimg');
+  } else if (mediaType === 'Audio') {
+    uploadPath = path.join(__dirname, 'grandquiz', 'soundfiles');
+  } else {
+    return res.status(400).send('Invalid media type');
+  }
 
-  pool.query(insertQuery, params, (error, results) => {
-    if (error) {
-      console.error('Database query error: ', error);
-      return res.status(500).send('Database error');
+  const file = req.file;
+  if (!file) {
+    return res.status(400).send('No file uploaded');
+  }
+
+  const filename = file.originalname;
+  const filePath = path.join(uploadPath, filename);
+
+  // Ensure the directory exists
+  fs.mkdirSync(uploadPath, { recursive: true });
+
+  // Save the file to the appropriate directory
+  fs.writeFile(filePath, file.buffer, (err) => {
+    if (err) {
+      console.error('File save error: ', err);
+      return res.status(500).send('File save error');
     }
-    res.json({ message: 'File uploaded and database updated successfully!' });
+
+    // Now insert into the database
+    const relativeFilePath = path.relative(__dirname, filePath); // Adjust as needed
+    const insertQuery = 'INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)';
+    const params = [mediaType, relativeFilePath];
+
+    pool.query(insertQuery, params, (error, results) => {
+      if (error) {
+        console.error('Database query error: ', error);
+        return res.status(500).send('Database error');
+      }
+      res.json({ message: 'File uploaded and database updated successfully!' });
+    });
   });
 });
 
