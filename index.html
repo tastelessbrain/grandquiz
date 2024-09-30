@@ -121,6 +121,12 @@
                 <button id="btn25">500</button>
             </div>
             <input type="button" class="round-info" value="Punkte verdoppeln" onclick="nextround()"></input>
+            <input type="button" class="manage_data" value="Manage Data"></input>
+            <script>
+                document.querySelector('.manage_data').addEventListener('click', function () {
+                    window.location.href = 'interface/insert.html';
+                  });
+            </script>
         </div>
         <div class="quest">
             <h1 class="questionEl"></h1>

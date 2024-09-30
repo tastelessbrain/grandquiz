@@ -34,12 +34,12 @@ function executeQuery(query, params, res) {
 // Dynamic query endpoint (VERY CAREFUL HERE!)
 app.post('/query', (req, res) => {
   const query = req.body.query;
-  
+
   // Security: Sanitize input or add some validation for allowed queries.
   if (typeof query !== 'string') {
     return res.status(400).send('Invalid query string');
   }
-  
+
   // Execute the query
   executeQuery(query, [], res);
 });
@@ -52,7 +52,7 @@ app.post('/setcategories', (req, res) => {
     'UPDATE Kategorien SET NAME = ? WHERE id = 2',
     'UPDATE Kategorien SET NAME = ? WHERE id = 3',
     'UPDATE Kategorien SET NAME = ? WHERE id = 4',
-    'UPDATE Kategorien SET NAME = ? WHERE id = 5'
+    'UPDATE Kategorien SET NAME = ? WHERE id = 5',
   ];
 
   const params = [
@@ -60,7 +60,7 @@ app.post('/setcategories', (req, res) => {
     [categories.category2],
     [categories.category3],
     [categories.category4],
-    [categories.category5]
+    [categories.category5],
   ];
 
   let completedQueries = 0;
@@ -76,6 +76,32 @@ app.post('/setcategories', (req, res) => {
       }
     });
   });
+});
+
+// Endpoint to update question data
+app.post('/updateQuestion', (req, res) => {
+  const { categoryId, questionNumber, frage, antwort, frageTyp, mediaId } =
+    req.body;
+
+  // Prepare the SQL query for updating the question
+  const updateQuery = `
+    UPDATE Fragen
+    SET FRAGE = ?, ANTWORT = ?, FRAGE_TYP = ?, MEDIA = ?
+    WHERE Kategorie = ? AND FNUMBER = ?
+  `;
+
+  // Set the parameters for the query
+  const params = [
+    frage,
+    antwort,
+    frageTyp,
+    mediaId,
+    categoryId,
+    questionNumber,
+  ];
+
+  // Execute the query using the executeQuery helper function
+  executeQuery(updateQuery, params, res);
 });
 
 // Start the server
