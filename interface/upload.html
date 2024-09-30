@@ -20,7 +20,7 @@
           });
     </script>
     <br></br>
-    <form id="upload" action="/upload" method="POST" enctype="multipart/form-data">
+    <form id="upload" action="/uploadMedia" method="POST" enctype="multipart/form-data">
         <fieldset>
             <legend>Upload pictures or audio files.</legend>
             <!-- Existing form elements -->
@@ -29,14 +29,32 @@
             <div class="form-group">
                 <label for="mediatype">Mediatype:</label>
                 <select id="mediatype" name="mediatype">
-                    <option value="Audio">Audio</option>
-                    <option value="Bild">Picture</option>
+                  <option value="Audio">Audio</option>
+                  <option value="Bild">Picture</option>
                 </select>
-            </div>
-            <legend>Info: Only one File at a time.</legend>
+              </div>
+            <legend>Info:  Only one File at a time.</legend>
             <br><br>
             <input type="submit" value="Upload">
         </fieldset>
     </form>
+    <script>
+        document.getElementById('upload').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            const formData = new FormData(this);
+
+            fetch('http://192.168.4.1:3000/uploadMedia', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('File uploaded successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
 </body>
 </html>

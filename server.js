@@ -1,15 +1,13 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-const multer = require('multer'); // Import multer for file uploads
-const path = require('path');
 const app = express();
 const bodyParser = require('body-parser');
-const fs = require('fs');
+const multer = require('multer');
+const path = require('path');
 
 // Use bodyParser to parse incoming requests
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors());
@@ -34,53 +32,6 @@ function executeQuery(query, params, res) {
     }
   });
 }
-
-// Set up multer storage configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const mediaType = req.body.mediatype;
-    let uploadPath = '';
-
-    if (mediaType === 'Audio') {
-      uploadPath = path.join(__dirname, '..', 'grandquiz', 'soundfiles');
-    } else if (mediaType === 'Bild') {
-      uploadPath = path.join(__dirname, '..', 'grandquiz', 'qimg');
-    }
-
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(uploadPath)) {
-      fs.mkdirSync(uploadPath, { recursive: true });
-    }
-
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename with original extension
-  },
-});
-
-const upload = multer({ storage: storage });
-
-// Endpoint to upload media
-app.post('/upload', upload.single('file'), (req, res) => {
-  const mediaType = req.body.mediatype;
-  const filePath = req.file ? req.file.path : null;
-
-  if (!filePath) {
-    return res.status(400).send('No file uploaded');
-  }
-
-  // Prepare the file path for insertion into the database (relative path)
-  const relativeFilePath = `.${filePath
-    .split('grandquiz')[1]
-    .replace(/\\/g, '/')}`;
-
-  // Insert the file information into the Medien table
-  const insertQuery = `INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)`;
-  const params = [mediaType, relativeFilePath];
-
-  executeQuery(insertQuery, params, res);
-});
 
 // Dynamic query endpoint (VERY CAREFUL HERE!)
 app.post('/query', (req, res) => {
@@ -153,6 +104,45 @@ app.post('/updateQuestion', (req, res) => {
 
   // Execute the query using the executeQuery helper function
   executeQuery(updateQuery, params, res);
+});
+
+//Mediaupload
+// Define storage configurations
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const mediaType = req.body.mediatype;
+    let uploadPath = '';
+    if (mediaType === 'Bild') {
+      uploadPath = path.join(__dirname, 'grandquiz', 'qimg');
+    } else if (mediaType === 'Audio') {
+      uploadPath = path.join(__dirname, 'grandquiz', 'soundfiles');
+    } else {
+      return cb(new Error('Invalid media type'), null);
+    }
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // You might want to handle duplicate filenames
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/uploadMedia', upload.single('file'), (req, res) => {
+  const mediaType = req.body.mediatype;
+  const filePath = path.join('./', req.file.path); // Adjust the path as needed
+
+  // Insert the media information into the database
+  const insertQuery = 'INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)';
+  const params = [mediaType, filePath];
+
+  pool.query(insertQuery, params, (error, results) => {
+    if (error) {
+      console.error('Database query error: ', error);
+      return res.status(500).send('Database error');
+    }
+    res.json({ message: 'File uploaded and database updated successfully!' });
+  });
 });
 
 // Start the server
