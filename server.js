@@ -9,6 +9,7 @@ const fs = require('fs');
 
 // Use bodyParser to parse incoming requests
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Enable CORS
 app.use(cors());
@@ -59,6 +60,27 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+
+// Endpoint to upload media
+app.post('/upload', upload.single('file'), (req, res) => {
+  const mediaType = req.body.mediatype;
+  const filePath = req.file ? req.file.path : null;
+
+  if (!filePath) {
+    return res.status(400).send('No file uploaded');
+  }
+
+  // Prepare the file path for insertion into the database (relative path)
+  const relativeFilePath = `.${filePath
+    .split('grandquiz')[1]
+    .replace(/\\/g, '/')}`;
+
+  // Insert the file information into the Medien table
+  const insertQuery = `INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)`;
+  const params = [mediaType, relativeFilePath];
+
+  executeQuery(insertQuery, params, res);
+});
 
 // Dynamic query endpoint (VERY CAREFUL HERE!)
 app.post('/query', (req, res) => {
@@ -131,27 +153,6 @@ app.post('/updateQuestion', (req, res) => {
 
   // Execute the query using the executeQuery helper function
   executeQuery(updateQuery, params, res);
-});
-
-// Endpoint to upload media
-app.post('/upload', upload.single('file'), (req, res) => {
-  const mediaType = req.body.mediatype;
-  const filePath = req.file ? req.file.path : null;
-
-  if (!filePath) {
-    return res.status(400).send('No file uploaded');
-  }
-
-  // Prepare the file path for insertion into the database (relative path)
-  const relativeFilePath = `.${filePath
-    .split('grandquiz')[1]
-    .replace(/\\/g, '/')}`;
-
-  // Insert the file information into the Medien table
-  const insertQuery = `INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)`;
-  const params = [mediaType, relativeFilePath];
-
-  executeQuery(insertQuery, params, res);
 });
 
 // Start the server
