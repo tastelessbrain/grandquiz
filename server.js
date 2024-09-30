@@ -1,8 +1,11 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const multer = require('multer'); // Import multer for file uploads
+const path = require('path');
 const app = express();
 const bodyParser = require('body-parser');
+const fs = require('fs');
 
 // Use bodyParser to parse incoming requests
 app.use(bodyParser.json());
@@ -30,6 +33,32 @@ function executeQuery(query, params, res) {
     }
   });
 }
+
+// Set up multer storage configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const mediaType = req.body.mediatype;
+    let uploadPath = '';
+
+    if (mediaType === 'Audio') {
+      uploadPath = path.join(__dirname, '..', 'grandquiz', 'soundfiles');
+    } else if (mediaType === 'Bild') {
+      uploadPath = path.join(__dirname, '..', 'grandquiz', 'qimg');
+    }
+
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename with original extension
+  },
+});
+
+const upload = multer({ storage: storage });
 
 // Dynamic query endpoint (VERY CAREFUL HERE!)
 app.post('/query', (req, res) => {
@@ -102,6 +131,27 @@ app.post('/updateQuestion', (req, res) => {
 
   // Execute the query using the executeQuery helper function
   executeQuery(updateQuery, params, res);
+});
+
+// Endpoint to upload media
+app.post('/upload', upload.single('file'), (req, res) => {
+  const mediaType = req.body.mediatype;
+  const filePath = req.file ? req.file.path : null;
+
+  if (!filePath) {
+    return res.status(400).send('No file uploaded');
+  }
+
+  // Prepare the file path for insertion into the database (relative path)
+  const relativeFilePath = `.${filePath
+    .split('grandquiz')[1]
+    .replace(/\\/g, '/')}`;
+
+  // Insert the file information into the Medien table
+  const insertQuery = `INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)`;
+  const params = [mediaType, relativeFilePath];
+
+  executeQuery(insertQuery, params, res);
 });
 
 // Start the server
