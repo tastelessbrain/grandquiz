@@ -121,9 +121,9 @@ app.post('/uploadMedia', upload.single('file'), (req, res) => {
 
   let uploadPath = '';
   if (mediaType === 'Bild') {
-    uploadPath = path.join(__dirname, 'grandquiz', 'qimg');
+    uploadPath = path.join(__dirname, 'qimg');
   } else if (mediaType === 'Audio') {
-    uploadPath = path.join(__dirname, 'grandquiz', 'soundfiles');
+    uploadPath = path.join(__dirname, 'soundfiles');
   } else {
     return res.status(400).send('Invalid media type');
   }
