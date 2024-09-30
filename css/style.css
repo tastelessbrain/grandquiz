@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   margin: 0;
   overflow: hidden;
 }
@@ -7,11 +8,10 @@ html, body {
   width: 0.2em;
   background-color: transparent;
 }
- 
+
 .main::-webkit-scrollbar-thumb {
   background-color: #555;
 }
-
 
 .question-board {
   display: none;
@@ -24,12 +24,11 @@ html, body {
 
 .points {
   display: none;
-  background: url(questions.png) no-repeat center center fixed; 
+  background: url(questions.png) no-repeat center center fixed;
   background-size: 100% 100%;
   width: 100vw;
   height: 100vh;
   min-width: 1024px;
-  
 }
 
 .active {
@@ -39,7 +38,7 @@ html, body {
 .question-board .board {
   padding: 2.5%;
 }
-.board{
+.board {
   width: 80%;
 }
 .question-board .row {
@@ -55,7 +54,7 @@ textarea {
   width: 100%;
   font-size: 35px;
   margin-bottom: 25px;
-  
+
   font-family: 'Carrois Gothic', sans-serif;
   font-weight: bold;
   text-transform: uppercase;
@@ -67,7 +66,7 @@ textarea {
   width: 100%;
   height: 15%;
   color: #fff;
-  
+
   border: 1px solid white;
   font-family: 'Carrois Gothic', sans-serif;
   font-weight: bold;
@@ -83,9 +82,8 @@ textarea {
 .question-board .row button:hover,
 .question-board .row button.used {
   -webkit-filter: brightness(30%);
-          filter: brightness(30%);
+  filter: brightness(30%);
 }
-
 
 /* Button colors orange*/
 .question-board .row.orange button:nth-child(2) {
@@ -199,6 +197,13 @@ textarea {
   left: 5px;
 }
 
+.manage_data {
+  position: absolute;
+  color: #000;
+  bottom: 5px;
+  right: 20em;
+}
+
 .screenBtn {
   position: absolute;
   color: #000;
@@ -206,7 +211,7 @@ textarea {
   right: 18%;
   z-index: 5;
 }
-.points{
+.points {
   width: 80%;
 }
 .points .row {
@@ -222,7 +227,7 @@ textarea {
 .points .score {
   top: 30vh;
   -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
+  transform: translateY(-50%);
   font-size: 80px;
   width: 33%;
   position: absolute;
@@ -235,24 +240,24 @@ textarea {
 .points .score45 {
   top: 85vh;
   -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
+  transform: translateY(-50%);
   font-size: 80px;
   width: 33%;
   position: absolute;
 }
-.quest{
+.quest {
   display: none;
   animation: der 1s ease;
 }
-.show{
+.show {
   float: right;
 }
 
-.countryName{
+.countryName {
   font-size: 85px;
   text-align: center;
 }
-.quest .questionEl{
+.quest .questionEl {
   font-size: 90px;
   text-align: center;
   font-weight: bold;
@@ -261,17 +266,17 @@ textarea {
 }
 
 @keyframes der {
-  from{
+  from {
     opacity: 0;
   }
-  to{
+  to {
     opacity: 1;
   }
 }
-.but{
+.but {
   display: block;
 }
-.imgcont{
+.imgcont {
   /* background: #000; */
   display: flex;
   justify-content: center;
@@ -280,16 +285,16 @@ textarea {
   height: 100vh;
 }
 
-.qimg{
+.qimg {
   width: auto;
   height: 70%;
   border-radius: 5px;
 }
-audio{
+audio {
   display: block;
   margin-bottom: 50%;
 }
-.modal{
+.modal {
   z-index: 2;
   position: absolute;
   top: 70%;
@@ -365,7 +370,8 @@ justify-content:space-around;*/
   margin-top: 20px;
 }
 
-.backBtn, .show {
+.backBtn,
+.show {
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
