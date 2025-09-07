@@ -39,11 +39,12 @@
         </fieldset>
     </form>
     <script>
+        const apiBase = `${window.location.protocol}//${window.location.hostname}:3000`;
         document.getElementById('upload').addEventListener('submit', function (event) {
             event.preventDefault(); // Prevent the default form submission
             const formData = new FormData(this);
 
-            fetch('http://192.168.4.1:3000/uploadMedia', {
+            fetch(`${apiBase}/uploadMedia`, {
                 method: 'POST',
                 body: formData,
             })
