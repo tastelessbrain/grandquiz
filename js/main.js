@@ -1,3 +1,4 @@
+        const apiBase = `${window.location.protocol}//${window.location.hostname}:3000`;
         document.addEventListener('DOMContentLoaded', function() {
             // Add event listeners to all buttons
             for (let i = 1; i <= 25; i++) {
@@ -111,3 +112,4 @@
                 questionEl.innerHTML = answer;
             }
         }
+
