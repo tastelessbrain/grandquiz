@@ -14,9 +14,11 @@
         var client;
         var playerNames = ["Spieler 1", "Spieler 2", "Spieler 3", "Spieler 4", "Spieler 5", "Spieler 6"]; // Spieler Namen
         var notificationSound = new Audio('soundfiles/sound.mp3'); // Pfad zur Ton-Datei
+        const apiBase = `${window.location.protocol}//${window.location.hostname}:3000`;
     
         function MQTTconnect() {
-            client = new Paho.Client("192.168.4.1", 9001, "clientId" + new Date().getTime());
+            const brokerHost = window.location.hostname;
+            client = new Paho.Client(brokerHost, 9001, "clientId" + new Date().getTime());
             var options = {
                 timeout: 3,
                 onSuccess: onConnect,
@@ -157,7 +159,7 @@
     <script src='js/app.js'></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('http://192.168.4.1:3000/query', {
+            fetch(`${apiBase}/query`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -202,3 +204,4 @@
     </script>
 </body>
 </html>
+
