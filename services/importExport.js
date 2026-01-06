@@ -30,8 +30,8 @@ function validateManifest(manifest) {
     manifest.questions.forEach((q, idx) => {
       if (typeof q.Kategorie === 'undefined') errors.push(`questions[${idx}].Kategorie missing`);
       if (typeof q.FNUMBER === 'undefined') errors.push(`questions[${idx}].FNUMBER missing`);
-      if (q.FRAGE != null && typeof q.FRAGE !== 'string') errors.push(`questions[${idx}].FRAGE not a string or null`);
-      if (q.ANTWORT != null && typeof q.ANTWORT !== 'string') errors.push(`questions[${idx}].ANTWORT not a string or null`);
+      if (q.FRAGE !== null && q.FRAGE !== undefined && typeof q.FRAGE !== 'string') errors.push(`questions[${idx}].FRAGE not a string or null`);
+      if (q.ANTWORT !== null && q.ANTWORT !== undefined && typeof q.ANTWORT !== 'string') errors.push(`questions[${idx}].ANTWORT not a string or null`);
       if (typeof q.FRAGE_TYP !== 'string') errors.push(`questions[${idx}].FRAGE_TYP missing or not a string`);
     });
   }
