@@ -5,7 +5,15 @@ const BASE = process.env.TEST_BASE || 'http://localhost:3000';
 async function get(path) {
   const res = await fetch(`${BASE}${path}`);
   const text = await res.text();
-  return { status: res.status, body: text, json: text ? JSON.parse(text) : null };
+  let json = null;
+  if (text) {
+    try {
+      json = JSON.parse(text);
+    } catch (e) {
+      json = null;
+    }
+  }
+  return { status: res.status, body: text, json };
 }
 
 async function post(path, body) {
