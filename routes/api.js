@@ -209,10 +209,14 @@ module.exports = function (app, pool, rootDir) {
       const file = req.file;
       if (!file) return res.status(400).send('No file uploaded');
 
-      const originalName = file.originalname || 'file';
+      const originalName = String(file.originalname || 'file');
       let filename = path.basename(originalName);
+      // replace spaces, strip disallowed chars
       filename = filename.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
-      if (!filename) filename = 'file';
+      // remove leading dots to avoid hidden/relative names like '.' or '..'
+      filename = filename.replace(/^[.]+/, '');
+      // fallback for completely stripped names or reserved names
+      if (!filename || filename === '.' || filename === '..') filename = 'file';
       const filePath = path.join(uploadPath, filename);
       const resolvedUploadPath = path.resolve(uploadPath);
       fs.mkdirSync(resolvedUploadPath, { recursive: true });
