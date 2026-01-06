@@ -15,6 +15,9 @@
           });
     </script>
     <input type="button" class="back" value="Back"></input>
+    <input type="button" id="export_zip" value="Export ZIP"></input>
+    <input type="file" id="import_zip_file" accept=".zip" style="display:none" />
+    <input type="button" id="import_zip" value="Import ZIP"></input>
     <script>
         document.querySelector('.back').addEventListener('click', function () {
             window.location.href = '../index.html';
@@ -182,6 +185,65 @@
           .catch((error) =>
             console.error('Error fetching media values:', error)
           );
+      });
+
+      document.getElementById('export_zip').addEventListener('click', function () {
+        fetch(window.location.origin + '/api/exportZip')
+          .then((res) => {
+            if (!res.ok) throw new Error('Export failed');
+            return res.blob();
+          })
+          .then((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'grandquiz-export.zip';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          })
+          .catch((err) => { console.error(err); alert('Export failed'); });
+      });
+
+      document.getElementById('import_zip').addEventListener('click', function () {
+        document.getElementById('import_zip_file').click();
+      });
+
+      document.getElementById('import_zip_file').addEventListener('change', function (ev) {
+        const file = ev.target.files[0];
+        if (!file) return;
+        const ok = confirm('WARNING: This import will WIPE all uploaded media and replace them with the files from the archive. This is destructive and cannot be undone. Continue?');
+        if (!ok) return;
+        const fd = new FormData();
+        fd.append('file', file);
+        fetch(window.location.origin + '/api/importZip', { method: 'POST', body: fd })
+          .then(async (res) => {
+            if (res.ok) {
+              await res.text();
+              alert('Import completed');
+              window.location.reload();
+              return;
+            }
+            // Try to parse JSON error response with `errors` array
+            try {
+              const body = await res.json();
+              if (body && Array.isArray(body.errors)) {
+                alert('Import failed:\n' + body.errors.join('\n'));
+                return;
+              }
+            } catch (e) {
+              // ignore JSON parse errors
+            }
+            // fallback to text
+            try {
+              const txt = await res.text();
+              alert('Import failed: ' + (txt || res.statusText));
+            } catch (e) {
+              alert('Import failed');
+            }
+          })
+          .catch((err) => { console.error(err); alert('Import failed'); });
       });
 
       document

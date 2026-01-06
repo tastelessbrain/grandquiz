@@ -1,16 +1,23 @@
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+const importExport = require('../services/importExport');
+const dbHelpers = require('../services/dbHelpers');
 
 module.exports = function (app, pool, rootDir) {
+  const storage = multer.memoryStorage();
+  const upload = multer({ storage: storage });
+
   app.get('/api/categories', (req, res) => {
-    pool.query('SELECT id, NAME FROM Kategorien', (error, results) => {
-      if (error) {
+    (async () => {
+      try {
+        const results = await dbHelpers.getCategories(pool);
+        res.json(results);
+      } catch (error) {
         console.error('Database query error: ', error);
-        return res.status(500).send('Database error');
+        res.status(500).send('Database error');
       }
-      res.json(results);
-    });
+    })();
   });
 
   // GET /api/question?id=...  OR  /api/question?category=...&number=...
@@ -20,26 +27,28 @@ module.exports = function (app, pool, rootDir) {
     const number = req.query.number;
 
     if (id) {
-      const q = `SELECT Fragen.FRAGE, Fragen.ANTWORT, Fragen.FRAGE_TYP, Medien.Media, Medien.Type AS MediaType FROM Fragen LEFT JOIN Medien ON Fragen.MEDIA = Medien.ID WHERE Fragen.ID = ?`;
-      pool.query(q, [id], (error, results) => {
-        if (error) {
+      (async () => {
+        try {
+          const results = await dbHelpers.getQuestionById(pool, id);
+          res.json(results);
+        } catch (error) {
           console.error('Database query error: ', error);
-          return res.status(500).send('Database error');
+          res.status(500).send('Database error');
         }
-        res.json(results);
-      });
+      })();
       return;
     }
 
     if (category && number) {
-      const q = `SELECT Fragen.FRAGE, Fragen.ANTWORT, Fragen.FRAGE_TYP, Medien.ID AS MediaID, Medien.Media, Medien.Type AS MediaType FROM Fragen LEFT JOIN Medien ON Fragen.MEDIA = Medien.ID WHERE Fragen.Kategorie = ? AND Fragen.FNUMBER = ?`;
-      pool.query(q, [category, number], (error, results) => {
-        if (error) {
+      (async () => {
+        try {
+          const results = await dbHelpers.getQuestionByCategoryNumber(pool, category, number);
+          res.json(results);
+        } catch (error) {
           console.error('Database query error: ', error);
-          return res.status(500).send('Database error');
+          res.status(500).send('Database error');
         }
-        res.json(results);
-      });
+      })();
       return;
     }
 
@@ -47,103 +56,101 @@ module.exports = function (app, pool, rootDir) {
   });
 
   app.get('/api/media', (req, res) => {
-    pool.query('SELECT ID, Media, Type FROM Medien', (error, results) => {
-      if (error) {
+    (async () => {
+      try {
+        const results = await dbHelpers.getMediaList(pool);
+        res.json(results);
+      } catch (error) {
         console.error('Database query error: ', error);
-        return res.status(500).send('Database error');
+        res.status(500).send('Database error');
       }
-      res.json(results);
+    })();
+  });
+
+  app.get('/api/exportZip', (req, res) => {
+    importExport.streamExportZip(pool, rootDir, res).catch((err) => {
+      console.error('Export ZIP error:', err);
+      if (!res.headersSent) res.status(500).send('Export failed');
     });
+  });
+
+  app.post('/api/importZip', upload.single('file'), async (req, res) => {
+    try {
+      const file = req.file;
+      if (!file) return res.status(400).send('No file uploaded');
+
+      const result = await importExport.importZipBuffer(pool, rootDir, file.buffer);
+      if (result && result.errors) return res.status(400).json({ errors: result.errors });
+      return res.send(result.message || 'Import ZIP completed');
+    } catch (err) {
+      console.error('Import ZIP error:', err);
+      res.status(500).send('Import failed');
+    }
   });
 
   app.post('/api/categories', (req, res) => {
-    const categories = req.body;
-    const queries = [
-      'UPDATE Kategorien SET NAME = ? WHERE id = 1',
-      'UPDATE Kategorien SET NAME = ? WHERE id = 2',
-      'UPDATE Kategorien SET NAME = ? WHERE id = 3',
-      'UPDATE Kategorien SET NAME = ? WHERE id = 4',
-      'UPDATE Kategorien SET NAME = ? WHERE id = 5',
-    ];
-
-    const params = [
-      [categories.category1],
-      [categories.category2],
-      [categories.category3],
-      [categories.category4],
-      [categories.category5],
-    ];
-
-    let completed = 0;
-    queries.forEach((query, idx) => {
-      pool.query(query, params[idx], (error) => {
-        if (error) {
-          console.error('Database query error: ', error);
-          return res.status(500).send('Database error');
-        }
-        completed++;
-        if (completed === queries.length) {
-          res.send('Categories updated successfully');
-        }
-      });
-    });
+    (async () => {
+      try {
+        const categories = req.body;
+        await dbHelpers.updateCategory(pool, 1, categories.category1);
+        await dbHelpers.updateCategory(pool, 2, categories.category2);
+        await dbHelpers.updateCategory(pool, 3, categories.category3);
+        await dbHelpers.updateCategory(pool, 4, categories.category4);
+        await dbHelpers.updateCategory(pool, 5, categories.category5);
+        res.send('Categories updated successfully');
+      } catch (error) {
+        console.error('Database query error: ', error);
+        res.status(500).send('Database error');
+      }
+    })();
   });
 
   app.post('/api/question', (req, res) => {
-    const { categoryId, questionNumber, frage, antwort, frageTyp, mediaId } = req.body;
-    const updateQuery = `
-      UPDATE Fragen
-      SET FRAGE = ?, ANTWORT = ?, FRAGE_TYP = ?, MEDIA = ?
-      WHERE Kategorie = ? AND FNUMBER = ?
-    `;
-    const params = [frage, antwort, frageTyp, mediaId, categoryId, questionNumber];
-    pool.query(updateQuery, params, (error, results) => {
-      if (error) {
+    (async () => {
+      try {
+        const { categoryId, questionNumber, frage, antwort, frageTyp, mediaId } = req.body;
+        await dbHelpers.updateQuestion(pool, categoryId, questionNumber, frage, antwort, frageTyp, mediaId);
+        res.send('Question updated successfully');
+      } catch (error) {
         console.error('Database query error: ', error);
-        return res.status(500).send('Database error');
+        res.status(500).send('Database error');
       }
-      res.send('Question updated successfully');
-    });
+    })();
   });
 
-  const storage = multer.memoryStorage();
-  const upload = multer({ storage: storage });
+  app.post('/api/uploadMedia', upload.single('file'), async (req, res) => {
+    try {
+      const mediaType = req.body.mediatype;
+      if (!mediaType) return res.status(400).send('No media type provided');
 
-  app.post('/api/uploadMedia', upload.single('file'), (req, res) => {
-    const mediaType = req.body.mediatype;
-    if (!mediaType) return res.status(400).send('No media type provided');
-
-    let uploadPath = '';
-    if (mediaType === 'Bild') {
-      uploadPath = path.join(rootDir, 'uploads/qimg');
-    } else if (mediaType === 'Audio') {
-      uploadPath = path.join(rootDir, 'uploads/soundfiles');
-    } else {
-      return res.status(400).send('Invalid media type');
-    }
-
-    const file = req.file;
-    if (!file) return res.status(400).send('No file uploaded');
-
-    const filename = file.originalname;
-    const filePath = path.join(uploadPath, filename);
-    fs.mkdirSync(uploadPath, { recursive: true });
-    fs.writeFile(filePath, file.buffer, (err) => {
-      if (err) {
-        console.error('File save error: ', err);
-        return res.status(500).send('File save error');
+      let uploadPath = '';
+      if (mediaType === 'Bild') {
+        uploadPath = path.join(rootDir, 'uploads/qimg');
+      } else if (mediaType === 'Audio') {
+        uploadPath = path.join(rootDir, 'uploads/soundfiles');
+      } else {
+        return res.status(400).send('Invalid media type');
       }
 
+      const file = req.file;
+      if (!file) return res.status(400).send('No file uploaded');
+
+      const filename = file.originalname;
+      const filePath = path.join(uploadPath, filename);
+      fs.mkdirSync(uploadPath, { recursive: true });
+      await fs.promises.writeFile(filePath, file.buffer);
+
       const relativeFilePath = path.relative(rootDir, filePath);
-      const insertQuery = 'INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)';
-      const params = [mediaType, relativeFilePath];
-      pool.query(insertQuery, params, (error) => {
-        if (error) {
-          console.error('Database query error: ', error);
-          return res.status(500).send('Database error');
-        }
+      try {
+        await dbHelpers.insertMedia(pool, mediaType, relativeFilePath);
         res.json({ message: 'File uploaded and database updated successfully!' });
-      });
-    });
+      } catch (error) {
+        console.error('Database query error: ', error);
+        res.status(500).send('Database error');
+      }
+    } catch (err) {
+      console.error('File save error: ', err);
+      res.status(500).send('File save error');
+    }
   });
 };
