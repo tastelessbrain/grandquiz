@@ -178,13 +178,7 @@
     <script src='js/app.js'></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch(window.location.origin + "/query", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ query: 'SELECT NAME FROM Kategorien' })
-            })
+            fetch(window.location.origin + "/api/categories")
             .then(response => response.json())
             .then(categories => {
                 const textareas = document.querySelectorAll('.category-button');

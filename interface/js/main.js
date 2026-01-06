@@ -14,25 +14,13 @@ function handleButtonClick(buttonId) {
 }
 
 function fetchQuestionData(buttonId) {
-  return fetch(window.location.origin + "/query", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: `
-                    SELECT Fragen.FRAGE, Fragen.ANTWORT, Fragen.FRAGE_TYP, Medien.Media, Medien.Type AS MediaType
-                    FROM Fragen
-                    LEFT JOIN Medien ON Fragen.MEDIA = Medien.ID
-                    WHERE Fragen.ID = ${buttonId}
-                `,
-    }),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  });
+  return fetch(`${window.location.origin}/api/question?id=${encodeURIComponent(buttonId)}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    });
 }
 
 function displayQuestion(data) {
