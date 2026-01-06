@@ -197,8 +197,11 @@
             .catch(error => console.error('Error fetching categories:', error));
         });
 
-        $(".question-board button").click(function() {
+        $(".question-board button:not(.category-button)").click(function() {
             $(this).toggleClass("used");
+            if (window.appState && typeof window.appState.onQuestionToggled === 'function') {
+                window.appState.onQuestionToggled(this.id, $(this).hasClass('used'));
+            }
         });
 
         function nextround() {

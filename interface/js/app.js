@@ -2,66 +2,193 @@ const rootDiv = document.querySelector(".cont-team");
 const resetBtn = document.querySelector(".reset");
 const addTeamBtn = document.querySelector(".addTeamBtn");
 
-//Team Point Handler
-// const inputEl= parseInt(teamnuber)
-function inputFunctio() {}
+const STORAGE_KEY = 'grandquiz_state_v1';
 
-// Increment button
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : { usedQuestions: {}, teamList: [] };
+  } catch (e) {
+    console.error('Load state failed', e);
+    return { usedQuestions: {}, teamList: [] };
+  }
+}
+
+function saveState(state) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.error('Save state failed', e);
+  }
+}
+
+function markQuestionUsed(qid, used) {
+  const state = loadState();
+  state.usedQuestions = state.usedQuestions || {};
+  if (used) {
+    state.usedQuestions[qid] = { used: true, class: 'used' };
+  } else {
+    delete state.usedQuestions[qid];
+  }
+  saveState(state);
+}
+
+function saveTeamsToState() {
+  const state = loadState();
+  const teams = [];
+  const teamEls = rootDiv.querySelectorAll('.indTeam');
+  teamEls.forEach((el, idx) => {
+    const nameEl = el.querySelector('.teamName');
+    const inputEl = el.querySelector('input[type="number"]');
+    const id = inputEl && inputEl.id ? inputEl.id : `input${idx+1}`;
+    teams.push({ id, name: nameEl ? nameEl.textContent.trim() : `Team ${idx+1}`, score: inputEl ? Number(inputEl.value) || 0 : 0 });
+  });
+  state.teamList = teams;
+  saveState(state);
+}
+
+function createTeamElement(team) {
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `<div class="indTeam"><p contenteditable class="teamName">${team.name || ''}</p><input class="team1Input" id="${team.id}" type="number" value="${team.score || 0}"><br>
+    <button class="addscore">+</button>
+    <button class="removescore">-</button>
+    <button class="removeteam">x</button></div>`;
+
+  const outer = wrapper.firstElementChild;
+  const addBtn = outer.querySelector('.addscore');
+  const remBtn = outer.querySelector('.removescore');
+  const delBtn = outer.querySelector('.removeteam');
+  const inputEl = outer.querySelector('input[type="number"]');
+  const nameEl = outer.querySelector('.teamName');
+
+  addBtn.addEventListener('click', () => {
+    if (inputEl.value === '') inputEl.value = 100;
+    else inputEl.value = Number(inputEl.value) + 100;
+    saveTeamsToState();
+  });
+  remBtn.addEventListener('click', () => {
+    if (inputEl.value !== '') inputEl.value = Math.max(0, Number(inputEl.value) - 100);
+    saveTeamsToState();
+  });
+  delBtn.addEventListener('click', () => {
+    if (confirm('Remove this team?')) {
+      outer.remove();
+      saveTeamsToState();
+    }
+  });
+  nameEl.addEventListener('input', () => saveTeamsToState());
+  if (inputEl) inputEl.addEventListener('input', () => saveTeamsToState());
+
+  return outer;
+}
+
+function restorateQuestions(state) {
+  const used = state.usedQuestions || {};
+  const buttons = document.querySelectorAll('.question-board button:not(.category-button)');
+  buttons.forEach(btn => {
+    if (used[btn.id]) btn.classList.add(used[btn.id].class || 'used');
+    else btn.classList.remove('used');
+  });
+}
+
+function restoreTeams(state) {
+  if (!state.teamList || !state.teamList.length) return;
+  rootDiv.innerHTML = '';
+  state.teamList.forEach(team => {
+    const el = createTeamElement(team);
+    rootDiv.appendChild(el);
+  });
+}
+
+function attachHandlersToExistingTeams() {
+  const teamEls = rootDiv.querySelectorAll('.indTeam');
+  teamEls.forEach((outer) => {
+    const addBtn = outer.querySelector('.addscore');
+    const remBtn = outer.querySelector('.removescore');
+    const delBtn = outer.querySelector('.removeteam');
+    const inputEl = outer.querySelector('input[type="number"]');
+    const nameEl = outer.querySelector('.teamName');
+
+    if (addBtn && inputEl) addBtn.addEventListener('click', () => {
+      if (inputEl.value === '') inputEl.value = 100;
+      else inputEl.value = Number(inputEl.value) + 100;
+      saveTeamsToState();
+    });
+    if (remBtn && inputEl) remBtn.addEventListener('click', () => {
+      if (inputEl.value !== '') inputEl.value = Math.max(0, Number(inputEl.value) - 100);
+      saveTeamsToState();
+    });
+    if (delBtn) delBtn.addEventListener('click', () => {
+      if (confirm('Remove this team?')) {
+        const container = delBtn.closest('.indTeam');
+        if (container) container.remove();
+        saveTeamsToState();
+      }
+    });
+    if (inputEl) inputEl.addEventListener('input', () => saveTeamsToState());
+    if (nameEl) nameEl.addEventListener('input', () => saveTeamsToState());
+  });
+}
+
+function restoreStateToUI() {
+  const state = loadState();
+  restorateQuestions(state);
+  restoreTeams(state);
+}
+
+window.appState = {
+  onQuestionToggled: function(qid, used) {
+    markQuestionUsed(qid, used);
+  }
+};
+
+// Keep add/remove/removeteam globals for existing onclick usage
 function add(inputId) {
   let x = document.getElementById(inputId);
-  if (x.value === "") {
-    x.value = 100;
-  } else {
-    let currentValue = parseInt(x.value);
-    x.value = currentValue + 100;
-  }
+  if (!x) return;
+  if (x.value === "") x.value = 100;
+  else x.value = Number(x.value) + 100;
+  saveTeamsToState();
 }
 
-//Decrement button
 function remove(inputId) {
   let x = document.getElementById(inputId);
-  if (x.value != 0) {
-    let currentValue = parseInt(x.value);
-    x.value = currentValue - 100;
-  }
+  if (!x) return;
+  if (x.value != 0) x.value = Math.max(0, Number(x.value) - 100);
+  saveTeamsToState();
 }
 
-//Adding, removing and reseting teams
-// Reset Button Function
-resetBtn.addEventListener("click", () => {
-  localStorage.clear();
-  setInterval(location.reload(), 1000);
-});
-
-// remove a team
 function removeteam(inputId) {
   let x = document.getElementById(inputId);
-  x.parentNode.remove();
+  if (!x) return;
+  if (!confirm('Remove this team?')) return;
+  const container = x.closest('.indTeam');
+  if (container) container.remove();
+  saveTeamsToState();
 }
+
+// Reset Button Function - remove only our stored state then reload
+resetBtn.addEventListener('click', () => {
+  if (!confirm('Reset all data and teams? This cannot be undone.')) return;
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) { console.error(e); }
+  setTimeout(() => location.reload(), 200);
+});
 
 // Add Team button function
 let count = 1;
-let countt = 0;
 addTeamBtn.addEventListener("click", function (e) {
   count++;
   if (count < 7) {
-    let newEl = document.createElement("div");
-    newEl.innerHTML = `<div class="indTeam"><p contenteditable="" class ="teamName">Team ${count}</p><input class="team1Input"
-         oninput="${inputFunctio()}" id="input${count}" type="number"><br>
-        <button class="addscore" onclick="add('input${count}')">+</button>
-        <button class="addscore" onclick="remove('input${count}')">-</button>
-        <button class="removeteam"  onclick=removeteam("input${count}")
-         id="input${count}">x</button> </div>`;
-    rootDiv.appendChild(newEl);
-    let newAddButton = newEl.querySelectorAll(".addscore");
-    let newRemoveButton = newEl.querySelectorAll(".removescore");
-    let newRemoveTeamButton = newEl.querySelectorAll(".removeteam");
-    newAddButton.forEach((button) => button.addEventListener("click", add));
-    newRemoveButton.forEach((button) =>
-      button.addEventListener("click", remove)
-    );
-    newRemoveTeamButton.forEach((button) =>
-      button.addEventListener("click", removeteam)
-    );
+    const id = `input${count}`;
+    const team = { id, name: `Team ${count}`, score: 0 };
+    const el = createTeamElement(team);
+    rootDiv.appendChild(el);
+    saveTeamsToState();
   }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  restoreStateToUI();
+  const state = loadState();
+  if (!state.teamList || !state.teamList.length) attachHandlersToExistingTeams();
 });
