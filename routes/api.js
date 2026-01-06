@@ -215,11 +215,15 @@ module.exports = function (app, pool, rootDir) {
       if (!filename) filename = 'file';
       const filePath = path.join(uploadPath, filename);
       const resolvedUploadPath = path.resolve(uploadPath);
+      fs.mkdirSync(resolvedUploadPath, { recursive: true });
+      const uploadPathStat = fs.statSync(resolvedUploadPath);
+      if (!uploadPathStat.isDirectory()) {
+        throw new Error('Upload path is not a directory');
+      }
       const resolvedFilePath = path.resolve(filePath);
       if (resolvedFilePath !== resolvedUploadPath && !resolvedFilePath.startsWith(resolvedUploadPath + path.sep)) {
         throw new Error('Invalid file path');
       }
-      fs.mkdirSync(resolvedUploadPath, { recursive: true });
       await fs.promises.writeFile(resolvedFilePath, file.buffer);
 
       const relativeFilePath = path.relative(rootDir, filePath);
