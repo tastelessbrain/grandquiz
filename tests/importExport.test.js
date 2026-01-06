@@ -47,7 +47,7 @@ describe('importExport validation', () => {
     const manifest = {
       categories: [{ id: 1, NAME: 'Cat1' }],
       questions: [{ Kategorie: 1, FNUMBER: 1, FRAGE: null, ANTWORT: null, FRAGE_TYP: 'Text', MEDIA: 1 }],
-      media: [{ ID: 1, Type: 'Bild', Media: 'uploads/qimg/foo.png', zipPath: 'media/foo.png' }],
+      media: [{ ID: 1, Type: 'Bild', zipPath: 'media/foo.png' }],
     };
     const fakeDirectory = { files: [{ path: 'media/other.png' }] };
     const errors = validateMediaPresence(manifest, fakeDirectory);
@@ -59,7 +59,7 @@ describe('importExport validation', () => {
     const manifest = {
       categories: [{ id: 1, NAME: 'Cat1' }],
       questions: [{ Kategorie: 1, FNUMBER: 1, FRAGE: null, ANTWORT: null, FRAGE_TYP: 'Text', MEDIA: 1 }],
-      media: [{ ID: 1, Type: 'Bild', Media: 'uploads/qimg/foo.png', zipPath: 'media/foo.png' }],
+      media: [{ ID: 1, Type: 'Bild', zipPath: 'media/foo.png' }],
     };
     const fakeDirectory = { files: [{ path: 'media/foo.png' }] };
     const errors = validateMediaPresence(manifest, fakeDirectory);

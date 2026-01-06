@@ -4,9 +4,23 @@ function runQueryGeneric(db, sql, params) {
   });
 }
 
+const fs = require('fs');
+const path = require('path');
+
 async function insertMedia(db, type, mediaPath) {
   const res = await runQueryGeneric(db, 'INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)', [type, mediaPath]);
   return res.insertId;
+}
+
+// Write a buffer to uploads (qimg or soundfiles) and insert a Medien row
+async function addMediaFromBuffer(db, type, filename, buffer, rootDir) {
+  const uploadPath = type === 'Bild' ? path.join(rootDir, 'uploads/qimg') : path.join(rootDir, 'uploads/soundfiles');
+  fs.mkdirSync(uploadPath, { recursive: true });
+  const filePath = path.join(uploadPath, filename);
+  fs.writeFileSync(filePath, buffer);
+  const relativeFilePath = path.relative(rootDir, filePath);
+  const newId = await insertMedia(db, type, relativeFilePath);
+  return newId;
 }
 
 async function updateCategory(db, id, name) {
@@ -37,5 +51,5 @@ async function getMediaList(db) {
   return await runQueryGeneric(db, 'SELECT ID, Media, Type FROM Medien');
 }
 
-module.exports = { runQueryGeneric, insertMedia, updateCategory, updateQuestion, getCategories, getQuestionById, getQuestionByCategoryNumber, getMediaList };
+module.exports = { runQueryGeneric, insertMedia, addMediaFromBuffer, updateCategory, updateQuestion, getCategories, getQuestionById, getQuestionByCategoryNumber, getMediaList };
 

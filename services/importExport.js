@@ -85,7 +85,8 @@ async function streamExportZip(pool, rootDir, res) {
     if (m.Media && fs.existsSync(filePath)) {
       archive.file(filePath, { name: zipPath });
     }
-    manifest.media.push({ ID: m.ID, Type: m.Type, Media: m.Media, zipPath });
+    // Do not include repository-local Media path in manifest; only include ID, Type and zipPath
+    manifest.media.push({ ID: m.ID, Type: m.Type, zipPath });
   }
 
   archive.append(JSON.stringify(manifest, null, 2), { name: 'manifest.json' });
@@ -139,26 +140,21 @@ async function importZipBuffer(pool, rootDir, buffer) {
               if (entry) {
                 const buf = await entry.buffer();
                 const filename = path.basename(m.zipPath);
-                const uploadPath = m.Type === 'Bild' ? qimgDir : soundDir;
-                const filePath = path.join(uploadPath, filename);
-                fs.writeFileSync(filePath, buf);
-                const relativeFilePath = path.relative(rootDir, filePath);
-                newMediaId = await dbHelpers.insertMedia(conn, m.Type, relativeFilePath);
+                newMediaId = await dbHelpers.addMediaFromBuffer(conn, m.Type, filename, buf, rootDir);
               } else {
-                newMediaId = await dbHelpers.insertMedia(conn, m.Type, m.Media || null);
+                // If the zip did not contain the media file, insert a DB row with null media path
+                newMediaId = await dbHelpers.insertMedia(conn, m.Type, null);
               }
               mediaIdMap[m.ID] = newMediaId;
             }
           }
 
-          // Update categories
           if (Array.isArray(manifest.categories)) {
             for (const c of manifest.categories) {
               await dbHelpers.updateCategory(conn, c.id, c.NAME);
             }
           }
 
-          // Update questions using Kategorie + FNUMBER and map media IDs
           if (Array.isArray(manifest.questions)) {
             for (const q of manifest.questions) {
               const newMedia = q.MEDIA ? (mediaIdMap[q.MEDIA] || null) : null;
