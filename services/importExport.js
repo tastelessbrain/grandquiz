@@ -74,7 +74,23 @@ async function streamExportZip(pool, rootDir, res) {
   res.setHeader('Content-Disposition', 'attachment; filename="grandquiz-export.zip"');
 
   const archive = archiver('zip', { zlib: { level: 9 } });
-  archive.on('error', (err) => { throw err; });
+  archive.on('error', (err) => {
+    console.error('Archive creation error:', err);
+    try {
+      if (!res.headersSent) {
+        if (typeof res.status === 'function') {
+          res.status(500).type('text').send('Failed to create archive');
+        } else {
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('Failed to create archive');
+        }
+      } else {
+        try { res.destroy(err); } catch (e) {}
+      }
+    } catch (e) {
+      try { res.destroy(err); } catch (e2) {}
+    }
+  });
   archive.pipe(res);
 
   const manifest = { categories, questions, media: [] };

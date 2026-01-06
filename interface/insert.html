@@ -139,19 +139,14 @@
           .then((data) => {
             console.log('Fetched data:', data); // Debugging: Log the fetched data
             if (data.length > 0) {
-              // Assuming the order of categories is important and matches the input fields
-              const placeholders = data.map((item) => item.NAME); // Use 'NAME' instead of 'name'
-              console.log('Placeholders:', placeholders); // Debugging: Log the placeholders array
-              document.getElementById('category1').placeholder =
-                placeholders[0] || '';
-              document.getElementById('category2').placeholder =
-                placeholders[1] || '';
-              document.getElementById('category3').placeholder =
-                placeholders[2] || '';
-              document.getElementById('category4').placeholder =
-                placeholders[3] || '';
-              document.getElementById('category5').placeholder =
-                placeholders[4] || '';
+                const names = data.map((item) => item.NAME);
+                console.log('Category names:', names);
+                // Fill the input values (not placeholders) so they are editable
+                document.getElementById('category1').value = names[0] || '';
+                document.getElementById('category2').value = names[1] || '';
+                document.getElementById('category3').value = names[2] || '';
+                document.getElementById('category4').value = names[3] || '';
+                document.getElementById('category5').value = names[4] || '';
 
               // Populate the select menu with category names and IDs
               const selectMenu = document.getElementById('kategorie');
@@ -225,7 +220,6 @@
               window.location.reload();
               return;
             }
-            // Try to parse JSON error response with `errors` array
             try {
               const body = await res.json();
               if (body && Array.isArray(body.errors)) {
@@ -233,9 +227,7 @@
                 return;
               }
             } catch (e) {
-              // ignore JSON parse errors
             }
-            // fallback to text
             try {
               const txt = await res.text();
               alert('Import failed: ' + (txt || res.statusText));
@@ -258,6 +250,22 @@
             category5: document.getElementById('category5').value,
           };
 
+          // Client-side validation: ensure all fields are non-empty and within length
+          const maxLen = 255;
+          for (let i = 1; i <= 5; i++) {
+            const key = `category${i}`;
+            const val = (categories[key] || '').trim();
+            if (val.length === 0) {
+              alert('Please fill all category fields');
+              return;
+            }
+            if (val.length > maxLen) {
+              alert(`${key} exceeds maximum length (${maxLen})`);
+              return;
+            }
+            categories[key] = val;
+          }
+
           fetch(window.location.origin + '/api/categories', {
             method: 'POST',
             headers: {
@@ -265,14 +273,20 @@
             },
             body: JSON.stringify(categories),
           })
-            .then((response) => response.text())
-            .then((data) => {
-              console.log('Update response:', data); // Debugging: Log the update response
+            .then(async (response) => {
+              const text = await response.text();
+              if (!response.ok) {
+                alert('Failed to update categories: ' + (text || response.statusText));
+                console.error('Update failed:', response.status, text);
+                return;
+              }
+              console.log('Update response:', text);
               alert('Categories updated successfully');
             })
-            .catch((error) =>
-              console.error('Error updating categories:', error)
-            );
+            .catch((error) => {
+              console.error('Error updating categories:', error);
+              alert('Error updating categories');
+            });
         });
 
       document
