@@ -124,17 +124,17 @@ CREATE TABLE `Medien` (
 LOCK TABLES `Medien` WRITE;
 /*!40000 ALTER TABLE `Medien` DISABLE KEYS */;
 INSERT INTO `Medien` VALUES
-(1,'Audio','./soundfiles/jvj.mp3'),
-(2,'Audio','./soundfiles/ok.mp3'),
-(3,'Audio','./soundfiles/kk.mp3'),
-(4,'Audio','./soundfiles/tasten.mp3'),
-(5,'Audio','./soundfiles/creep.mp3'),
-(6,'Audio','./soundfiles/ttl.mp3'),
-(7,'Bild','./qimg/wdym.jpg'),
-(8,'Bild','./qimg/wdym8.jpg'),
-(9,'Bild','./qimg/wdym11.jpg'),
-(10,'Bild','./qimg/wdym12.png'),
-(11,'Bild','./qimg/wdym14.jpg');
+(1,'Audio','./uploads/soundfiles/jvj.mp3'),
+(2,'Audio','./uploads/soundfiles/ok.mp3'),
+(3,'Audio','./uploads/soundfiles/kk.mp3'),
+(4,'Audio','./uploads/soundfiles/tasten.mp3'),
+(5,'Audio','./uploads/soundfiles/creep.mp3'),
+(6,'Audio','./uploads/soundfiles/ttl.mp3'),
+(7,'Bild','./uploads/qimg/wdym.jpg'),
+(8,'Bild','./uploads/qimg/wdym8.jpg'),
+(9,'Bild','./uploads/qimg/wdym11.jpg'),
+(10,'Bild','./uploads/qimg/wdym12.png'),
+(11,'Bild','./uploads/qimg/wdym14.jpg');
 /*!40000 ALTER TABLE `Medien` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

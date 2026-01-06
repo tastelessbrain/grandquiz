@@ -1,76 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML Form Elements</title>
-</head>
+    <title>KNOW WHERE?</title>
+    <link href="https://fonts.googleapis.com/css?family=Carrois+Gothic" rel="stylesheet">
+    <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">-->
+    <link rel="stylesheet" href="js/min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style2.css">
+    <script src="js/paho.js"></script>
+    <script type="text/javascript">
+        var client;
+        var playerNames = ["Spieler 1", "Spieler 2", "Spieler 3", "Spieler 4", "Spieler 5", "Spieler 6"]; // Spieler Namen
+        var notificationSound = new Audio('sounds/sound.mp3'); // Pfad zur Ton-Datei
+        const base_hostname = `${window.location.hostname}`;
+
+        function createMqttClient(host, port) {
+            client = new Paho.Client(host, port, "clientId" + new Date().getTime());
+            const options = {
+                timeout: 3,
+                onSuccess: onConnect,
+                onFailure: function (message) {
+                    console.log("Connection failed: " + (message && message.errorMessage ? message.errorMessage : message));
+                    setTimeout(MQTTconnect, 10000);
+                }
+            };
+            client.connect(options);
+            client.onMessageArrived = onMessageArrived;
+        }
+
+        async function MQTTconnect() {
+            let mqttHost = window.location.hostname;
+            let mqttPort = 1883;
+            try {
+                const res = await fetch('/config');
+                if (res.ok) {
+                    const cfg = await res.json();
+                    if (cfg && cfg.mqtt) {
+                        if (cfg.mqtt.host) mqttHost = cfg.mqtt.host;
+                        if (cfg.mqtt.port) mqttPort = Number(cfg.mqtt.port);
+                    }
+                } else {
+                    console.warn('/config returned', res.status);
+                }
+            } catch (err) {
+                console.warn('Could not fetch /config — using defaults', err);
+            }
+            createMqttClient(mqttHost, mqttPort);
+        }
+    
+        function onConnect() {
+            console.log("Connected to MQTT Broker");
+            client.subscribe("test/topic");
+        }
+    
+        function onMessageArrived(message) {
+            var buttonIndex = parseInt(message.payloadString.replace("Knopf", "")) - 1;
+            showNotification(playerNames[buttonIndex]);
+        }
+    
+        function showNotification(message) {
+            notificationSound.play();
+            var notification = document.createElement("div");
+            notification.className = "notification";
+            notification.innerText = message;
+            document.body.appendChild(notification);
+            setTimeout(function() {
+                document.body.removeChild(notification);
+            }, 3000); // Popup verschwindet nach 3000 Millisekunden (3 Sekunden)
+        }
+    
+        window.onload = MQTTconnect;
+    </script>
+    <style>
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35%;
+            padding: 20px;
+            background-color: #f2f2f2;
+            color: #000000;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+            height: 30%;
+            font-variant-caps: petite-caps;
+            font-size: 6em;
+            line-height: 2.5em;
+    }
+    </style>
+</head>         
+
 <body>
-    <h1>HTML Form Elements</h1>
-    <form action="/submit" method="post">
-        <fieldset>
-            <legend>Personal Information</legend>
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name"><br><br>
+    <video autoplay muted loop id="background-video">
+        <source src="backgrounds/blue.webm" type="video/webm">
+    </video>
+    <div class="question-board active" id="act">
+        <div class="board">
+            <div class="row orange">
+                <button id="cat1" class= category-button>Short-List</button>
+		
+                <button id="btn1">100</button>
+                <button id="btn2">200</button>
+                <button id="btn3">300</button>
+                <button id="btn4">400</button>
+                <button id="btn5">500</button>
+            </div>
+            <div class="row blue">
+		<button id="cat2" class="category-button">Blue Marble</button>
+		
+                <button id="btn6">100</button>
+                <button id="btn7">200</button>
+                <button id="btn8">300</button>
+                <button id="btn9">400</button>
+                <button id="btn10">500</button>
+            </div>
+            <div class="row pink">
+                <button id="cat3" class="category-button">Wer wars?</button>
+		
+                <button id="btn11">100</button>
+                <button id="btn12">200</button>
+                <button id="btn13">300</button>
+                <button id="btn14">400</button>
+                <button id="btn15">500</button>
+            </div>
+            <div class="row darkblue">
+                <button id="cat4" class="category-button">Hör mal!</button>
+		
+                <button id="btn16">100</button>
+                <button id="btn17">200</button>
+                <button id="btn18">300</button>
+                <button id="btn19">400</button>
+                <button id="btn20">500</button>
+            </div>
+            <div class="row green" style="margin-right: unset;">
+                <button id="cat5" class="category-button">What do you meme?</button>
+		
+                <button id="btn21">100</button>
+                <button id="btn22">200</button>
+                <button id="btn23">300</button>
+                <button id="btn24">400</button>
+                <button id="btn25">500</button>
+            </div>
+            <input type="button" class="round-info" value="Punkte verdoppeln" onclick="nextround()"></input>
+            <input type="button" class="manage_data" value="Manage Data"></input>
+            <script>
+                document.querySelector('.manage_data').addEventListener('click', function () {
+                    window.location.href = 'insert.html';
+                  });
+            </script>
+        </div>
+        <div class="quest">
+            <h1 class="questionEl"></h1>
+            <hr>
+        </div>
+    </div>
+    <div class="main">
+        <div class="cont-team">
+            <div class="indTeam">
+                <p class="teamName" contenteditable="">Team 1</p>
+                <input class="team1Input" type="number" oninput="inputFunctio()" id="input"><br>
+                <button class="addscore" onclick="add('input')">+</button>
+                <button class="removescore" onclick="remove('input')">-</button>
+            </div>
+        </div>
+        <br>
+        <button class="addTeamBtn">Add Team</button>
+        <button class="reset">Reset</button>
+    </div>
+    <!--<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>-->
+    <script src='js/min.js'></script>
+    <script src='js/main.js'></script>
+    <script src='js/app.js'></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch(window.location.origin + "/query", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: 'SELECT NAME FROM Kategorien' })
+            })
+            .then(response => response.json())
+            .then(categories => {
+                const textareas = document.querySelectorAll('.category-button');
+                categories.forEach((category, index) => {
+                    if (textareas[index]) {
+                        textareas[index].textContent = category.NAME;
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching categories:', error));
+        });
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password"><br><br>
+        $(".question-board button").click(function() {
+            $(this).toggleClass("used");
+        });
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email"><br><br>
-
-            <label for="dob">Date of Birth:</label>
-            <input type="date" id="dob" name="dob"><br><br>
-
-            <label for="color">Favorite Color:</label>
-            <input type="color" id="color" name="color"><br><br>
-
-            <label for="gender">Gender:</label>
-            <input type="radio" id="male" name="gender" value="male">
-            <label for="male">Male</label>
-            <input type="radio" id="female" name="gender" value="female">
-            <label for="female">Female</label><br><br>
-
-            <label for="hobbies">Hobbies:</label>
-            <input type="checkbox" id="reading" name="hobbies" value="reading">
-            <label for="reading">Reading</label>
-            <input type="checkbox" id="traveling" name="hobbies" value="traveling">
-            <label for="traveling">Traveling</label><br><br>
-
-            <label for="country">Country:</label>
-            <select id="country" name="country">
-                <option value="usa">USA</option>
-                <option value="canada">Canada</option>
-                <option value="uk">UK</option>
-            </select><br><br>
-
-            <label for="bio">Bio:</label><br>
-            <textarea id="bio" name="bio" rows="4" cols="50"></textarea><br><br>
-
-            <label for="file">Upload File:</label>
-            <input type="file" id="file" name="file"><br><br>
-
-            <label for="range">Range:</label>
-            <input type="range" id="range" name="range" min="0" max="100"><br><br>
-
-            <label for="progress">Progress:</label>
-            <progress id="progress" value="70" max="100"></progress><br><br>
-
-            <label for="meter">Meter:</label>
-            <meter id="meter" value="0.6">60%</meter><br><br>
-
-            <label for="datalist">Choose a browser:</label>
-            <input list="browsers" id="datalist" name="browser">
-            <datalist id="browsers">
-                <option value="Chrome">
-                <option value="Firefox">
-                <option value="Safari">
-                <option value="Edge">
-            </datalist><br><br>
-
-            <button type="submit">Submit</button>
-            <button type="reset">Reset</button>
-        </fieldset>
-    </form>
+        function nextround() {
+            let firstPointValue = parseInt($(".question-board button:not(.category-button)").first().html());
+                
+            if (firstPointValue === 100) {
+                $(".question-board button:not(.category-button)").each(function() {
+                    let button = $(this);
+                    let currentValue = parseInt(button.html());
+                    button.html(currentValue * 2);
+                });
+                $(".round-info").attr('value', 'Punkte halbieren');
+            } else {
+                $(".question-board button:not(.category-button)").each(function() {
+                    let button = $(this);
+                    let currentValue = parseInt(button.html());
+                    button.html(currentValue / 2);
+                });
+                $(".round-info").attr('value', 'Punkte verdoppeln');
+            }
+        }
+    </script>
 </body>
 </html>
+

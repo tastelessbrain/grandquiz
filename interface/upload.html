@@ -43,7 +43,7 @@
             event.preventDefault(); // Prevent the default form submission
             const formData = new FormData(this);
 
-            fetch('http://192.168.4.1:3000/uploadMedia', {
+            fetch(window.location.origin + '/uploadMedia', {
                 method: 'POST',
                 body: formData,
             })

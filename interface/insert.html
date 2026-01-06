@@ -131,7 +131,7 @@
     </form>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        fetch('http://192.168.4.1:3000/query', {
+        fetch(window.location.origin + '/query', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -171,7 +171,7 @@
           );
 
         // Fetch media files and populate the 'mediafile' select menu
-        fetch('http://192.168.4.1:3000/query', {
+        fetch(window.location.origin + '/query', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -208,7 +208,7 @@
             category5: document.getElementById('category5').value,
           };
 
-          fetch('http://192.168.4.1:3000/setcategories', {
+          fetch(window.location.origin + '/setcategories', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -238,7 +238,7 @@
           const mediaId = document.getElementById('mediafile').value;
 
           // Senden der Daten an den Server
-          fetch('http://192.168.4.1:3000/updateQuestion', {
+          fetch(window.location.origin + '/updateQuestion', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -276,7 +276,7 @@
 
         if (categoryId !== 'none' && questionNumber) {
           const query = `SELECT Fragen.FRAGE, Fragen.ANTWORT, Fragen.FRAGE_TYP, Medien.ID AS MediaID, Medien.Media, Medien.Type AS MediaType FROM Fragen LEFT JOIN Medien ON Fragen.MEDIA = Medien.ID WHERE Fragen.Kategorie = ${categoryId} AND Fragen.FNUMBER = ${questionNumber}`;
-          fetch('http://192.168.4.1:3000/query', {
+          fetch(window.location.origin + '/query', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

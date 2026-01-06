@@ -8,7 +8,7 @@ $("#btn1").click(()=>{
     
 })
 $("#btn2").click(()=>{
-    let audio = `<audio id="pop" controls><source src="./soundfiles/sound.mp3" type="audio/mpeg"></audio>`; 
+    let audio = `<audio id="pop" controls><source src="./uploads/soundfiles/sound.mp3" type="audio/mpeg"></audio>`; 
 	console.log($("audio#pop")[0]);
     let questiontype ="What is the name of the song";
     let name = "juice "
@@ -18,7 +18,7 @@ $("#btn2").click(()=>{
     
 })
 $("#btn3").click(()=>{
-    let img = `<img class="qimg" src="./qimg/hulk.jpg"/>`; 
+    let img = `<img class="qimg" src="./uploads/qimg/hulk.jpg"/>`; 
     let questiontype ="What is the name of this Hero";
     let name = "THE INCREDIBLE HULK"
     btnFunction(img,questiontype);

@@ -7,19 +7,39 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs'); // Import the fs module
 
+// Load configuration from config.json
+const config = require(path.join(__dirname, 'config.json'));
+
 // Use bodyParser to parse incoming requests
 app.use(bodyParser.json());
 
 // Enable CORS
 app.use(cors());
 
+// Serve the web interface from the `interface` folder
+const interfacePath = path.join(__dirname, 'interface');
+app.use(express.static(interfacePath));
+
+// Ensure root URL serves index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(interfacePath, 'index.html'));
+});
+
+// Serve media from the top-level `uploads` folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Configuration endpoint: return mqtt settings only
+app.get('/config', (req, res) => {
+  res.json({ mqtt: config.mqtt || { host: '', port: 9001 } });
+});
+
 // Create a connection pool
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'p42', // replace with your MySQL username
-  password: '12345678', // replace with your MySQL password
-  database: 'project_42',
-  port: 3306,
+  host: config.mysql.host,
+  user: config.mysql.user,
+  password: config.mysql.password,
+  database: config.mysql.database,
+  port: config.mysql.port,
 });
 
 // Helper function to execute queries
@@ -121,9 +141,9 @@ app.post('/uploadMedia', upload.single('file'), (req, res) => {
 
   let uploadPath = '';
   if (mediaType === 'Bild') {
-    uploadPath = path.join(__dirname, 'qimg');
+    uploadPath = path.join(__dirname, 'uploads/qimg');
   } else if (mediaType === 'Audio') {
-    uploadPath = path.join(__dirname, 'soundfiles');
+    uploadPath = path.join(__dirname, 'uploads/soundfiles');
   } else {
     return res.status(400).send('Invalid media type');
   }
@@ -162,6 +182,6 @@ app.post('/uploadMedia', upload.single('file'), (req, res) => {
 });
 
 // Start the server
-app.listen(3000, () => {
-  console.log('Server running on port 3000');
+app.listen(config.server.port, () => {
+  console.log(`Server running on port ${config.server.port}`);
 });
