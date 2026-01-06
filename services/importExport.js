@@ -179,12 +179,12 @@ async function importZipBuffer(pool, rootDir, buffer) {
           }
 
           await execConnQuery('COMMIT');
-          conn.release();
           resolve({ success: true, message: 'Import ZIP completed (uploads and Medien wiped and replaced)' });
         } catch (innerErr) {
           try { await execConnQuery('ROLLBACK'); } catch (e) {}
-          conn.release();
           reject(innerErr);
+        } finally {
+          conn.release();
         }
       })();
     });
