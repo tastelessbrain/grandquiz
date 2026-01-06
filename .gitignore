@@ -29,4 +29,4 @@ jspm_packages/
 .mp4
 
 .github/
-#uploads/*
+uploads/*
