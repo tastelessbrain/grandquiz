@@ -316,10 +316,16 @@
               mediaId: mediaId === 'none' ? null : mediaId,
             }),
           })
-            .then((response) => response.text())
-            .then((data) => {
-              console.log('Update response:', data); // Debugging: Update-Antwort protokollieren
+            .then(async (response) => {
+              const text = await response.text();
+              console.log('Update response status:', response.status, 'body:', text);
+              if (!response.ok) {
+                alert('Fehler beim Aktualisieren der Frage: ' + (text || response.statusText));
+                return;
+              }
               alert('Frage erfolgreich aktualisiert');
+              // Refresh the form values from server so subsequent edits work without reload
+              fetchQuestionData();
             })
             .catch((error) =>
               console.error('Fehler beim Aktualisieren der Frage:', error)
