@@ -208,6 +208,7 @@
                     button.html(currentValue * 2);
                 });
                 $(".round-info").attr('value', 'Punkte halbieren');
+                if (window.appState && typeof window.appState.onRoundChanged === 'function') window.appState.onRoundChanged(true);
             } else {
                 $(".question-board button:not(.category-button)").each(function() {
                     let button = $(this);
@@ -215,6 +216,7 @@
                     button.html(currentValue / 2);
                 });
                 $(".round-info").attr('value', 'Punkte verdoppeln');
+                if (window.appState && typeof window.appState.onRoundChanged === 'function') window.appState.onRoundChanged(false);
             }
         }
     </script>
