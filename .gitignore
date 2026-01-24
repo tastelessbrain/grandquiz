@@ -27,3 +27,6 @@ jspm_packages/
 .env
 
 .mp4
+
+.github/
+uploads/*

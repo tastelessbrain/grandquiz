@@ -1,0 +1,17 @@
+{
+  "mysql": {
+    "host": "localhost",
+    "user": "p42",
+    "password": "12345678",
+    "database": "project_42",
+    "port": 3306
+  },
+  "server": {
+    "port": 3000
+  }
+  ,
+  "mqtt": {
+    "host": "",
+    "port": 9001
+  }
+}

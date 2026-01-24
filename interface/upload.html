@@ -20,7 +20,7 @@
           });
     </script>
     <br></br>
-    <form id="upload" action="/uploadMedia" method="POST" enctype="multipart/form-data">
+    <form id="upload" action="/api/uploadMedia" method="POST" enctype="multipart/form-data">
         <fieldset>
             <legend>Upload pictures or audio files.</legend>
             <!-- Existing form elements -->
@@ -43,7 +43,7 @@
             event.preventDefault(); // Prevent the default form submission
             const formData = new FormData(this);
 
-            fetch('http://192.168.4.1:3000/uploadMedia', {
+            fetch(window.location.origin + '/api/uploadMedia', {
                 method: 'POST',
                 body: formData,
             })
