@@ -134,12 +134,43 @@ function restoreStateToUI() {
   const state = loadState();
   restorateQuestions(state);
   restoreTeams(state);
+    applyRoundState(state);
 }
+
+  function saveRoundState(doubled) {
+    const state = loadState();
+    state.roundDoubled = !!doubled;
+    saveState(state);
+  }
+
+  function applyRoundState(state) {
+    const isDoubled = !!(state && state.roundDoubled);
+    const buttons = document.querySelectorAll('.question-board button:not(.category-button)');
+    if (!buttons || buttons.length === 0) return;
+    const firstPointValue = parseInt(buttons[0].textContent);
+    if (isDoubled && firstPointValue === 100) {
+      buttons.forEach(button => {
+        const currentValue = parseInt(button.textContent) || 0;
+        button.textContent = String(currentValue * 2);
+      });
+    } else if (!isDoubled && firstPointValue === 200) {
+      buttons.forEach(button => {
+        const currentValue = parseInt(button.textContent) || 0;
+        button.textContent = String(currentValue / 2);
+      });
+    }
+    const roundBtn = document.querySelector('.round-info');
+    if (roundBtn) roundBtn.value = isDoubled ? 'Punkte halbieren' : 'Punkte verdoppeln';
+  }
 
 window.appState = {
   onQuestionToggled: function(qid, used) {
     markQuestionUsed(qid, used);
   }
+};
+
+window.appState.onRoundChanged = function(doubled) {
+  saveRoundState(doubled);
 };
 
 // Keep add/remove/removeteam globals for existing onclick usage

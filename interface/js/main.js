@@ -5,6 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
       .getElementById(`btn${i}`)
       .addEventListener("click", () => handleButtonClick(i));
   }
+
+  window.addEventListener("resize", () => {
+    adjustQuestionMediaSize();
+  });
 });
 
 function handleButtonClick(buttonId) {
@@ -14,25 +18,13 @@ function handleButtonClick(buttonId) {
 }
 
 function fetchQuestionData(buttonId) {
-  return fetch(window.location.origin + "/query", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      query: `
-                    SELECT Fragen.FRAGE, Fragen.ANTWORT, Fragen.FRAGE_TYP, Medien.Media, Medien.Type AS MediaType
-                    FROM Fragen
-                    LEFT JOIN Medien ON Fragen.MEDIA = Medien.ID
-                    WHERE Fragen.ID = ${buttonId}
-                `,
-    }),
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  });
+  return fetch(`${window.location.origin}/api/question?id=${encodeURIComponent(buttonId)}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    });
 }
 
 function displayQuestion(data) {
@@ -52,6 +44,7 @@ function displayQuestion(data) {
     const imgEl = document.createElement("img");
     imgEl.className = "qimg";
     imgEl.src = data[0].Media;
+    imgEl.addEventListener("load", () => adjustQuestionMediaSize());
     questionContainer.appendChild(imgEl);
   }
 
@@ -91,7 +84,51 @@ function displayQuestion(data) {
   const rows = document.querySelectorAll(".board .row");
   rows.forEach((row) => (row.style.display = "none"));
   document.querySelector(".round-info").style.display = "none";
-  questionContainer.style.display = "block";
+  questionContainer.style.display = "flex";
+  requestAnimationFrame(() => adjustQuestionMediaSize());
+}
+
+function adjustQuestionMediaSize() {
+  const questionContainer = document.querySelector(".quest");
+  if (!questionContainer || questionContainer.style.display === "none") {
+    return;
+  }
+
+  const imgEl = questionContainer.querySelector(".qimg");
+  if (!imgEl) {
+    return;
+  }
+
+  const questionEl = questionContainer.querySelector(".questionEl");
+  const buttonContainer = questionContainer.querySelector(".button-container");
+  const styles = window.getComputedStyle(questionContainer);
+  const paddingTop = parseFloat(styles.paddingTop) || 0;
+  const paddingBottom = parseFloat(styles.paddingBottom) || 0;
+  const gap = parseFloat(styles.rowGap || styles.gap) || 0;
+
+  const maxContainerHeight = Math.min(
+    window.innerHeight * 0.78,
+    window.innerHeight - 120
+  );
+  questionContainer.style.maxHeight = `${Math.round(maxContainerHeight)}px`;
+
+  const textHeight = questionEl ? questionEl.getBoundingClientRect().height : 0;
+  const buttonsHeight = buttonContainer
+    ? buttonContainer.getBoundingClientRect().height
+    : 0;
+
+  const available =
+    maxContainerHeight -
+    textHeight -
+    buttonsHeight -
+    paddingTop -
+    paddingBottom -
+    gap * 2 -
+    8;
+
+  if (available > 0) {
+    imgEl.style.maxHeight = `${Math.floor(available)}px`;
+  }
 }
 
 function handleBackButtonClick() {
@@ -114,4 +151,6 @@ function handleShowButtonClick(answer) {
     showBtn.value = "Show Question";
     questionEl.innerHTML = answer;
   }
+
+  requestAnimationFrame(() => adjustQuestionMediaSize());
 }

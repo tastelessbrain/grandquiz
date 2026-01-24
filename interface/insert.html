@@ -15,6 +15,9 @@
           });
     </script>
     <input type="button" class="back" value="Back"></input>
+    <input type="button" id="export_zip" value="Export ZIP"></input>
+    <input type="file" id="import_zip_file" accept=".zip" style="display:none" />
+    <input type="button" id="import_zip" value="Import ZIP"></input>
     <script>
         document.querySelector('.back').addEventListener('click', function () {
             window.location.href = '../index.html';
@@ -131,30 +134,19 @@
     </form>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        fetch(window.location.origin + '/query', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query: 'SELECT id, NAME FROM Kategorien' }),
-        })
+        fetch(window.location.origin + '/api/categories')
           .then((response) => response.json())
           .then((data) => {
             console.log('Fetched data:', data); // Debugging: Log the fetched data
             if (data.length > 0) {
-              // Assuming the order of categories is important and matches the input fields
-              const placeholders = data.map((item) => item.NAME); // Use 'NAME' instead of 'name'
-              console.log('Placeholders:', placeholders); // Debugging: Log the placeholders array
-              document.getElementById('category1').placeholder =
-                placeholders[0] || '';
-              document.getElementById('category2').placeholder =
-                placeholders[1] || '';
-              document.getElementById('category3').placeholder =
-                placeholders[2] || '';
-              document.getElementById('category4').placeholder =
-                placeholders[3] || '';
-              document.getElementById('category5').placeholder =
-                placeholders[4] || '';
+                const names = data.map((item) => item.NAME);
+                console.log('Category names:', names);
+                // Fill the input values (not placeholders) so they are editable
+                document.getElementById('category1').value = names[0] || '';
+                document.getElementById('category2').value = names[1] || '';
+                document.getElementById('category3').value = names[2] || '';
+                document.getElementById('category4').value = names[3] || '';
+                document.getElementById('category5').value = names[4] || '';
 
               // Populate the select menu with category names and IDs
               const selectMenu = document.getElementById('kategorie');
@@ -171,13 +163,7 @@
           );
 
         // Fetch media files and populate the 'mediafile' select menu
-        fetch(window.location.origin + '/query', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query: 'SELECT ID, Media FROM Medien' }),
-        })
+        fetch(window.location.origin + '/api/media')
           .then((response) => response.json())
           .then((data) => {
             console.log('Fetched media data:', data); // Debugging: Log the fetched media data
@@ -196,6 +182,62 @@
           );
       });
 
+      document.getElementById('export_zip').addEventListener('click', function () {
+        fetch(window.location.origin + '/api/exportZip')
+          .then((res) => {
+            if (!res.ok) throw new Error('Export failed');
+            return res.blob();
+          })
+          .then((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'grandquiz-export.zip';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          })
+          .catch((err) => { console.error(err); alert('Export failed'); });
+      });
+
+      document.getElementById('import_zip').addEventListener('click', function () {
+        document.getElementById('import_zip_file').click();
+      });
+
+      document.getElementById('import_zip_file').addEventListener('change', function (ev) {
+        const file = ev.target.files[0];
+        if (!file) return;
+        const ok = confirm('WARNING: This import will WIPE all uploaded media and replace them with the files from the archive. This is destructive and cannot be undone. Continue?');
+        if (!ok) return;
+        const fd = new FormData();
+        fd.append('file', file);
+        fetch(window.location.origin + '/api/importZip', { method: 'POST', body: fd })
+          .then(async (res) => {
+            if (res.ok) {
+              await res.text();
+              alert('Import completed');
+              window.location.reload();
+              return;
+            }
+            try {
+              const body = await res.json();
+              if (body && Array.isArray(body.errors)) {
+                alert('Import failed:\n' + body.errors.join('\n'));
+                return;
+              }
+            } catch (e) {
+            }
+            try {
+              const txt = await res.text();
+              alert('Import failed: ' + (txt || res.statusText));
+            } catch (e) {
+              alert('Import failed');
+            }
+          })
+          .catch((err) => { console.error(err); alert('Import failed'); });
+      });
+
       document
         .getElementById('categoryForm')
         .addEventListener('submit', function (event) {
@@ -208,21 +250,43 @@
             category5: document.getElementById('category5').value,
           };
 
-          fetch(window.location.origin + '/setcategories', {
+          // Client-side validation: ensure all fields are non-empty and within length
+          const maxLen = 255;
+          for (let i = 1; i <= 5; i++) {
+            const key = `category${i}`;
+            const val = (categories[key] || '').trim();
+            if (val.length === 0) {
+              alert('Please fill all category fields');
+              return;
+            }
+            if (val.length > maxLen) {
+              alert(`${key} exceeds maximum length (${maxLen})`);
+              return;
+            }
+            categories[key] = val;
+          }
+
+          fetch(window.location.origin + '/api/categories', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(categories),
           })
-            .then((response) => response.text())
-            .then((data) => {
-              console.log('Update response:', data); // Debugging: Log the update response
+            .then(async (response) => {
+              const text = await response.text();
+              if (!response.ok) {
+                alert('Failed to update categories: ' + (text || response.statusText));
+                console.error('Update failed:', response.status, text);
+                return;
+              }
+              console.log('Update response:', text);
               alert('Categories updated successfully');
             })
-            .catch((error) =>
-              console.error('Error updating categories:', error)
-            );
+            .catch((error) => {
+              console.error('Error updating categories:', error);
+              alert('Error updating categories');
+            });
         });
 
       document
@@ -238,7 +302,7 @@
           const mediaId = document.getElementById('mediafile').value;
 
           // Senden der Daten an den Server
-          fetch(window.location.origin + '/updateQuestion', {
+          fetch(window.location.origin + '/api/question', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -252,10 +316,16 @@
               mediaId: mediaId === 'none' ? null : mediaId,
             }),
           })
-            .then((response) => response.text())
-            .then((data) => {
-              console.log('Update response:', data); // Debugging: Update-Antwort protokollieren
+            .then(async (response) => {
+              const text = await response.text();
+              console.log('Update response status:', response.status, 'body:', text);
+              if (!response.ok) {
+                alert('Fehler beim Aktualisieren der Frage: ' + (text || response.statusText));
+                return;
+              }
               alert('Frage erfolgreich aktualisiert');
+              // Refresh the form values from server so subsequent edits work without reload
+              fetchQuestionData();
             })
             .catch((error) =>
               console.error('Fehler beim Aktualisieren der Frage:', error)
@@ -275,14 +345,7 @@
         const questionNumber = document.getElementById('fragennummer').value;
 
         if (categoryId !== 'none' && questionNumber) {
-          const query = `SELECT Fragen.FRAGE, Fragen.ANTWORT, Fragen.FRAGE_TYP, Medien.ID AS MediaID, Medien.Media, Medien.Type AS MediaType FROM Fragen LEFT JOIN Medien ON Fragen.MEDIA = Medien.ID WHERE Fragen.Kategorie = ${categoryId} AND Fragen.FNUMBER = ${questionNumber}`;
-          fetch(window.location.origin + '/query', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ query: query }),
-          })
+          fetch(window.location.origin + `/api/question?category=${encodeURIComponent(categoryId)}&number=${encodeURIComponent(questionNumber)}`)
             .then((response) => response.json())
             .then((data) => {
               console.log('Fetched question data:', data); // Debugging: Log the fetched question data

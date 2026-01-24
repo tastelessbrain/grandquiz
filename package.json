@@ -5,6 +5,18 @@
     "express": "^4.21.0",
     "multer": "^2.0.2",
     "mysql2": "^3.11.3",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "archiver": "^5.3.1",
+    "unzipper": "^0.10.11"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "node-fetch": "^2.6.7"
+  },
+  "scripts": {
+    "test-ci": "jest --runInBand"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
