@@ -91,8 +91,8 @@ describe('API integration tests (CI, test DB)', () => {
     const restoreBody = {
       categoryId: 1,
       questionNumber: 1,
-      frage: original.FRAGE,
-      antwort: original.ANTWORT,
+      frage: (original.FRAGE || ''),
+      antwort: (original.ANTWORT || ''),
       frageTyp: original.FRAGE_TYP,
       mediaId: original.MediaID || null,
     };

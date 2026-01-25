@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Media Browser</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <h1>Media Browser</h1>
+    <div id="controls-top">
+      <button id="back_btn" aria-label="Back">Back</button>
+      <button id="refresh_media_btn" aria-label="Refresh media list">Refresh</button>
+    </div>
+    <div id="controls-sync">
+      <button id="sync_media_btn" aria-label="Sync files to database">Sync Files → DB</button>
+      <label style="margin-left:1rem"><input type="checkbox" id="delete_db_missing"> Delete DB entries for missing files</label>
+    </div>
+    <div id="upload_embed" style="margin-top:12px; border:1px dashed #ccc; padding:10px; border-radius:6px; background:#fff">
+      <form id="upload_form" enctype="multipart/form-data">
+        <fieldset>
+          <legend>Upload media (only one file at a time)</legend>
+          <label for="mb_file">File:</label>
+          <input type="file" id="mb_file" name="file" required accept="image/*" />
+          <label for="mb_mediatype" style="margin-left:8px">Mediatype:</label>
+          <select id="mb_mediatype" name="mediatype">
+            <option value="Bild">Picture</option>
+            <option value="Audio">Audio</option>
+          </select>
+          <button id="mb_upload_btn" type="submit" aria-label="Upload media" style="margin-left:8px">Upload</button>
+        </fieldset>
+      </form>
+    </div>
+    <div id="media_list" style="margin-top:1rem"></div>
+
+    <script src="js/media_browser.js" defer></script>
+  </body>
+</html>

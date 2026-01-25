@@ -4,17 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Database</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <h1>Edit Categories and Questions.</h1>
-    <input type="button" class="upload_data" value="Upload Media"></input>
+    <input type="button" class="back" value="Back"></input>
+    <input type="button" class="open_media_browser" value="Media Browser"></input>
     <script>
-        document.querySelector('.upload_data').addEventListener('click', function () {
-            window.location.href = 'upload.html';
+        document.querySelector('.open_media_browser').addEventListener('click', function () {
+            window.location.href = 'media_browser.html';
           });
     </script>
-    <input type="button" class="back" value="Back"></input>
     <input type="button" id="export_zip" value="Export ZIP"></input>
     <input type="file" id="import_zip_file" accept=".zip" style="display:none" />
     <input type="button" id="import_zip" value="Import ZIP"></input>
