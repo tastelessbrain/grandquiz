@@ -8,10 +8,23 @@
   },
   "server": {
     "port": 3000
-  }
-  ,
+  },
+  "ssl": {
+    "enabled": false,
+    "key": "certs/key.pem",
+    "cert": "certs/cert.pem"
+  },
   "mqtt": {
     "host": "",
     "port": 9001
+  },
+  "auth": {
+    "enabled": false,
+    "users": [
+      {
+        "user": "admin",
+        "password": "CHANGE_ME"
+      }
+    ]
   }
 }
