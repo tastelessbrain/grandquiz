@@ -71,6 +71,84 @@ module.exports = function (app, pool, rootDir) {
     })();
   });
 
+  const mediaSync = require('../services/mediaSync');
+
+  app.get('/api/media/files', (req, res) => {
+    (async () => {
+      try {
+        const files = await mediaSync.scanUploads(rootDir);
+        const mediaRows = await dbHelpers.getMediaList(pool);
+        // determine which media IDs are referenced by questions and collect references
+        let refCounts = [];
+        let refList = [];
+        try {
+          refCounts = await dbHelpers.runQueryGeneric(pool, 'SELECT MEDIA AS mediaId, COUNT(*) AS cnt FROM Fragen WHERE MEDIA IS NOT NULL GROUP BY MEDIA');
+          refList = await dbHelpers.runQueryGeneric(pool, 'SELECT Kategorie, FNUMBER, MEDIA FROM Fragen WHERE MEDIA IS NOT NULL');
+        } catch (e) {
+          console.error('Error fetching referenced media info:', e);
+        }
+        const refCountById = {};
+        for (const r of refCounts) refCountById[r.mediaId] = r.cnt || 0;
+        const refsById = {};
+        for (const r of refList) {
+          if (!r.MEDIA) continue;
+          if (!refsById[r.MEDIA]) refsById[r.MEDIA] = [];
+          refsById[r.MEDIA].push({ Kategorie: r.Kategorie, FNUMBER: r.FNUMBER });
+        }
+
+        const dbByPath = {};
+        for (const r of mediaRows) if (r.Media) dbByPath[r.Media] = Object.assign({}, r, { referenced: !!refCountById[r.ID], refCount: refCountById[r.ID] || 0, refs: refsById[r.ID] || [] });
+        const dbOnlyMissing = [];
+        for (const r of mediaRows) {
+          if (r.Media) {
+            const abs = path.join(rootDir, r.Media);
+            if (!fs.existsSync(abs)) dbOnlyMissing.push(r);
+          }
+        }
+        res.json({ files: files.map(f => ({ path: f.rel, filename: f.filename, type: f.type })), dbByPath, dbOnly: dbOnlyMissing });
+      } catch (err) {
+        console.error('Error scanning media files:', err);
+        res.status(500).send('Error scanning media files');
+      }
+    })();
+  });
+
+  app.post('/api/media/sync', (req, res) => {
+    (async () => {
+      try {
+        const body = req.body || {};
+        const paths = Array.isArray(body.paths) ? body.paths : null;
+        const deleteDbMissing = !!body.deleteDbMissing;
+        const result = await mediaSync.syncFiles(pool, rootDir, { paths, deleteDbMissing });
+        res.json(result);
+      } catch (err) {
+        console.error('Error syncing media files:', err);
+        res.status(500).send('Error syncing media files');
+      }
+    })();
+  });
+
+  app.delete('/api/media/:id', (req, res) => {
+    (async () => {
+      try {
+        const id = parseInt(req.params.id, 10);
+        if (!id || isNaN(id)) return res.status(400).send('Invalid id');
+        const deleteFile = req.query.deleteFile !== 'false';
+        try {
+          const result = await mediaSync.deleteMedia(pool, rootDir, id, deleteFile);
+          res.json(result);
+        } catch (e) {
+          if (String(e).includes('not found')) return res.status(404).send('Media not found');
+          console.error('Error deleting media:', e);
+          res.status(500).send('Error deleting media');
+        }
+      } catch (err) {
+        console.error('Error deleting media:', err);
+        res.status(500).send('Error deleting media');
+      }
+    })();
+  });
+
   app.get('/api/exportZip', (req, res) => {
     importExport.streamExportZip(pool, rootDir, res).catch((err) => {
       console.error('Export ZIP error:', err);

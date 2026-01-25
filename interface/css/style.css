@@ -1,7 +1,6 @@
 html,
 body {
   margin: 0;
-  overflow: hidden;
 }
 
 .main::-webkit-scrollbar {
@@ -397,6 +396,35 @@ justify-content:space-around;*/
 .qaudio {
   display: block;
   margin: 20px auto;
+}
+
+.media-row { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; border-radius:6px; background:#fafafa; display:flex; gap:12px; align-items:flex-start; }
+.media-row .meta { flex:1 }
+.media-row img { max-width:200px; max-height:120px; display:block }
+.media-row audio { max-width:260px; display:block; margin-bottom: 0; }
+.media-row .controls { display:flex; flex-direction:column; gap:6px }
+.media-row.unused { opacity: 0.6; color: #666 }
+#media_list { margin-top: 1rem }
+#controls-top { display:flex; gap:8px; align-items:center }
+#controls-sync { margin-top:8px }
+.meta-title { font-weight:600; margin-bottom:6px; }
+.meta-status { font-size:0.9em; color:#333; margin-top:6px }
+.meta-note { font-size:0.9em; color:#666; margin-top:4px }
+.meta-ref-list { margin:6px 0 0 12px; padding:0; list-style:none }
+.meta-ref-item { font-size:0.9em; color:#444; margin:2px 0 }
+
+.form-group {
+  margin-bottom: 15px;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
 }
 
 .quest {

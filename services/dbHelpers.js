@@ -1,11 +1,11 @@
+const fs = require('fs');
+const path = require('path');
+
 function runQueryGeneric(db, sql, params) {
   return new Promise((resolve, reject) => {
     db.query(sql, params, (err, results) => err ? reject(err) : resolve(results));
   });
 }
-
-const fs = require('fs');
-const path = require('path');
 
 async function insertMedia(db, type, mediaPath) {
   const res = await runQueryGeneric(db, 'INSERT INTO Medien (TYPE, MEDIA) VALUES (?, ?)', [type, mediaPath]);
@@ -51,5 +51,38 @@ async function getMediaList(db) {
   return await runQueryGeneric(db, 'SELECT ID, Media, Type FROM Medien');
 }
 
-module.exports = { runQueryGeneric, insertMedia, addMediaFromBuffer, updateCategory, updateQuestion, getCategories, getQuestionById, getQuestionByCategoryNumber, getMediaList };
+async function getMediaByPath(db, mediaPath) {
+  const rows = await runQueryGeneric(db, 'SELECT ID, Media, Type FROM Medien WHERE Media = ?', [mediaPath]);
+  return rows && rows.length > 0 ? rows[0] : null;
+}
+
+async function deleteMediaById(db, id) {
+  return await runQueryGeneric(db, 'DELETE FROM Medien WHERE ID = ?', [id]);
+}
+
+async function getMediaById(db, id) {
+  const rows = await runQueryGeneric(db, 'SELECT ID, Media, Type FROM Medien WHERE ID = ?', [id]);
+  return rows && rows.length > 0 ? rows[0] : null;
+}
+
+async function withTransaction(pool, fn) {
+  const conn = await new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => (err ? reject(err) : resolve(connection)));
+  });
+  try {
+    await new Promise((resolve, reject) => conn.beginTransaction((err) => (err ? reject(err) : resolve())));
+    const res = await fn(conn);
+    await new Promise((resolve, reject) => conn.commit((err) => (err ? reject(err) : resolve())));
+    return res;
+  } catch (err) {
+    try {
+      await new Promise((resolve) => conn.rollback(resolve));
+    } catch (_) {}
+    throw err;
+  } finally {
+    try { conn.release(); } catch (_) {}
+  }
+}
+
+module.exports = { runQueryGeneric, insertMedia, addMediaFromBuffer, updateCategory, updateQuestion, getCategories, getQuestionById, getQuestionByCategoryNumber, getMediaList, getMediaByPath, deleteMediaById, getMediaById, withTransaction };
 
