@@ -21,9 +21,17 @@ The app reads configuration from [config.json](config.json). Keys used by the se
   - **port**: database port (number, typically `3306`)
 - **server**:
   - **port**: port the Express server listens on (number, e.g. `3000`)
+- **ssl**: optional HTTPS configuration
+  - **enabled**: enable HTTPS (boolean)
+  - **key**: path to the PEM private key file (string, relative to repository root)
+  - **cert**: path to the PEM certificate file (string, relative to repository root)
+  - (HTTPS uses the same `server.port` as the HTTP server)
 - **mqtt**:
   - **host**: MQTT hostname for the web client to connect to. If empty, the client falls back to `window.location.hostname` aka the same hostname you are using to access the website.
   - **port**: MQTT port (number). The web UI defaults to `9001` if this is not set.
+- **auth**:
+  - **enabled**: enable HTTP Basic authentication for the web service (boolean, `false` to disable)
+  - **users**: array of user objects with `user` and `password` fields. Example: `[{ "user": "admin", "password": "secret" }]`
 
 Example `config.json`:
 
@@ -39,12 +47,29 @@ Example `config.json`:
   "server": {
     "port": 3000
   },
+  "ssl": {
+    "enabled": false,
+    "key": "certs/key.pem",
+    "cert": "certs/cert.pem"
+  },
   "mqtt": {
     "host": "",
     "port": 9001
   }
+  ,
+  "auth": {
+    "enabled": false,
+    "users": [
+      {
+        "user": "",
+        "password": ""
+      }
+    ]
+  }
 }
 ```
+
+Security note: If you enable HTTP Basic authentication via the `auth` section, do so only when HTTPS is enabled. Basic auth credentials are sent in plaintext over HTTP and can be intercepted; enabling `auth.enabled` without `ssl.enabled` exposes user passwords. Prefer setting `auth.enabled` to `true` only when `ssl.enabled` is also `true` and you have valid certificate files.
 
 **MQTT / Mosquitto**
 - The web UI expects an MQTT broker available (typically via WebSockets). For the default setup the UI connects on the WebSocket port (default configured in `config.json`, commonly `9001`).
